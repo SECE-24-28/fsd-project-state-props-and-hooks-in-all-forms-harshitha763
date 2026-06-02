@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - FashionCart</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top px-4">
+        <a class="navbar-brand fw-bold" href="index.html">
+            <i class="fas fa-shopping-bag"></i> FashionCart
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <div class="ms-auto d-flex gap-2 align-items-center">
+                <a href="index.html" class="btn btn-outline-light">Home</a>
+                <a href="categories.html" class="btn btn-outline-light">Categories</a>
+                <a href="about.html" class="btn btn-outline-light">About</a>
+                <button class="btn btn-warning position-relative" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+                    <i class="fas fa-shopping-cart"></i> Cart
+                </button>
+                <div class="nav-item dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user-circle"></i> <span id="userDisplay">User</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user"></i> Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-heart"></i> Wishlist</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-box"></i> Orders</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- About Hero -->
+    <section class="about-hero">
+        <h1>About FashionCart</h1>
+        <p>Your Destination for Trendy Fashion</p>
+    </section>
+
+    <!-- About Content -->
+    <div class="container my-5">
+        <div class="row align-items-center mb-5">
+            <div class="col-md-6">
+                <h2 class="fw-bold mb-3">Our Story</h2>
+                <p>FashionCart was founded in 2020 with a simple mission: to make trendy and quality fashion accessible to everyone. We started as a small online store and have now grown into one of the most trusted fashion retailers in the region.</p>
+                <p>We believe that fashion is more than just clothing – it's a way to express yourself. Our carefully curated collection brings you the latest trends from around the world at competitive prices.</p>
+            </div>
+            <div class="col-md-6">
+                <img src="https://images.unsplash.com/photo-1470079694179-b20511004b88?q=80&w=764&auto=format&fit=crop" class="img-fluid rounded" alt="Fashion Store">
+            </div>
+        </div>
+
+        <!-- Mission & Values -->
+        <div class="row text-center my-5">
+            <div class="col-md-4 mb-4">
+                <div class="p-4">
+                    <i class="fas fa-target" style="font-size: 3rem; color: #667eea; margin-bottom: 15px;"></i>
+                    <h5 class="fw-bold">Our Mission</h5>
+                    <p>To provide high-quality fashion products at affordable prices with exceptional customer service.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="p-4">
+                    <i class="fas fa-heart" style="font-size: 3rem; color: #667eea; margin-bottom: 15px;"></i>
+                    <h5 class="fw-bold">Our Values</h5>
+                    <p>Quality, honesty, sustainability, and customer satisfaction are at the core of everything we do.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="p-4">
+                    <i class="fas fa-globe" style="font-size: 3rem; color: #667eea; margin-bottom: 15px;"></i>
+                    <h5 class="fw-bold">Our Vision</h5>
+                    <p>To become the most loved and trusted online fashion destination globally.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Why Choose Us -->
+        <div class="bg-light p-5 rounded my-5">
+            <h2 class="fw-bold mb-4 text-center">Why Choose FashionCart?</h2>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex">
+                        <div style="min-width: 50px;">
+                            <i class="fas fa-check-circle" style="font-size: 1.5rem; color: #667eea;"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6>Curated Collection</h6>
+                            <p>Hand-picked items from top brands and emerging designers</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex">
+                        <div style="min-width: 50px;">
+                            <i class="fas fa-check-circle" style="font-size: 1.5rem; color: #667eea;"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6>Best Prices</h6>
+                            <p>Competitive pricing with regular discounts and seasonal offers</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex">
+                        <div style="min-width: 50px;">
+                            <i class="fas fa-check-circle" style="font-size: 1.5rem; color: #667eea;"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6>Fast Shipping</h6>
+                            <p>Quick and reliable delivery to your doorstep</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex">
+                        <div style="min-width: 50px;">
+                            <i class="fas fa-check-circle" style="font-size: 1.5rem; color: #667eea;"></i>
+                        </div>
+                        <div class="ms-3">
+                            <h6>Easy Returns</h6>
+                            <p>Hassle-free 30-day return policy</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team Section -->
+        <h2 class="fw-bold mb-4 text-center mt-5">Meet Our Team</h2>
+        <div class="row text-center mb-5">
+            <div class="col-md-4">
+                <div class="team-card">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=687&auto=format&fit=crop" alt="Team Member">
+                    <h5>Sarah Johnson</h5>
+                    <p>Founder & CEO</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="team-card">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=687&auto=format&fit=crop" alt="Team Member">
+                    <h5>Michael Chen</h5>
+                    <p>Design Lead</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="team-card">
+                    <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=687&auto=format&fit=crop" alt="Team Member">
+                    <h5>Emma Rodriguez</h5>
+                    <p>Customer Success</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Section -->
+    <section class="bg-light py-5">
+        <div class="container text-center">
+            <h2 class="fw-bold mb-4">Get In Touch</h2>
+            <p class="mb-4">Have any questions? We'd love to hear from you!</p>
+            <div class="row">
+                <div class="col-md-4">
+                    <i class="fas fa-envelope" style="font-size: 2rem; color: #667eea; margin-bottom: 15px;"></i>
+                    <h6>Email</h6>
+                    <p><a href="mailto:info@fashioncart.com">info@fashioncart.com</a></p>
+                </div>
+                <div class="col-md-4">
+                    <i class="fas fa-phone" style="font-size: 2rem; color: #667eea; margin-bottom: 15px;"></i>
+                    <h6>Phone</h6>
+                    <p>+1 (555) 123-4567</p>
+                </div>
+                <div class="col-md-4">
+                    <i class="fas fa-map-marker-alt" style="font-size: 2rem; color: #667eea; margin-bottom: 15px;"></i>
+                    <h6>Address</h6>
+                    <p>123 Fashion Street, New York, NY 10001</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <h5>FashionCart</h5>
+                    <p>Your ultimate online fashion destination.</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6>Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white-50 text-decoration-none">Home</a></li>
+                        <li><a href="categories.html" class="text-white-50 text-decoration-none">Categories</a></li>
+                        <li><a href="about.html" class="text-white-50 text-decoration-none">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6>Help & Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#" class="text-white-50 text-decoration-none">Contact Us</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Shipping Info</a></li>
+                        <li><a href="#" class="text-white-50 text-decoration-none">Returns</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h6>Follow Us</h6>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="bg-white-50">
+            <div class="text-center text-white-50">
+                <p>&copy; 2024 FashionCart. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Shopping Cart Offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title">Shopping Cart</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <p class="text-muted">Your cart is empty</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Check if logged in
+        window.addEventListener('DOMContentLoaded', function() {
+            if (!localStorage.getItem('isLoggedIn')) {
+                window.location.href = 'login.html';
+            } else {
+                const email = localStorage.getItem('userEmail');
+                document.getElementById('userDisplay').textContent = email?.split('@')[0] || 'User';
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userEmail');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>
