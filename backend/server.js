@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
 const path    = require('path');
-const { initDb } = require('./database');
+const { connectDB, seedProducts } = require('./database');
 
 const app = express();
 
@@ -33,7 +33,7 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 
-initDb().then(() => {
+connectDB().then(seedProducts).then(() => {
   app.listen(PORT, () => {
     console.log(`\n🚀 FashionCart server running at http://localhost:${PORT}`);
     console.log(`   Frontend  → http://localhost:${PORT}/login.html`);

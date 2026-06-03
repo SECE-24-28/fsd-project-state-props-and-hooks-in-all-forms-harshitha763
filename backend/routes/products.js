@@ -1,27 +1,26 @@
 const express = require('express');
-const db      = require('../database');
+const { Product } = require('../database');
 const router  = express.Router();
 
-router.get('/', (req, res) => {
-  const { tag, search, sort } = req.query;
-  let sql    = 'SELECT * FROM products WHERE 1=1';
-  const args = [];
+router.get('/', async (req, res) => {
+  try {
+    const { tag, search, sort } = req.query;
+    const query = {};
+    if (tag && tag !== 'all') query.tag = tag;
+    if (search) query.$or = [{ name: new RegExp(search, 'i') }, { category: new RegExp(search, 'i') }];
 
-  if (tag && tag !== 'all') { sql += ' AND tag = ?'; args.push(tag); }
-  if (search) { sql += ' AND (name LIKE ? OR category LIKE ?)'; args.push(`%${search}%`, `%${search}%`); }
-
-  if (sort === 'price-asc')  sql += ' ORDER BY price ASC';
-  else if (sort === 'price-desc') sql += ' ORDER BY price DESC';
-  else if (sort === 'name')  sql += ' ORDER BY name ASC';
-  else sql += ' ORDER BY id ASC';
-
-  res.json(db.all(sql, args));
+    const sortMap = { 'price-asc': { price: 1 }, 'price-desc': { price: -1 }, 'name': { name: 1 } };
+    const products = await Product.find(query).sort(sortMap[sort] || { createdAt: 1 });
+    res.json(products);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-router.get('/:id', (req, res) => {
-  const product = db.get('SELECT * FROM products WHERE id = ?', [req.params.id]);
-  if (!product) return res.status(404).json({ error: 'Product not found' });
-  res.json(product);
+router.get('/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ error: 'Product not found' });
+    res.json(product);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 module.exports = router;

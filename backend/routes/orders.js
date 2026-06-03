@@ -1,64 +1,58 @@
 const express = require('express');
-const db      = require('../database');
+const { Order, Cart } = require('../database');
 const { auth } = require('./auth');
 const router  = express.Router();
 
-router.get('/', auth, (req, res) => {
-  const orders = db.all('SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC', [req.user.id]);
-  const result = orders.map(order => {
-    const items = db.all('SELECT * FROM order_items WHERE order_id = ?', [order.id]);
-    return { ...order, items };
-  });
-  res.json(result);
+router.get('/', auth, async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.user.id }).sort({ createdAt: -1 });
+    res.json(orders);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-router.get('/:id', auth, (req, res) => {
-  const order = db.get('SELECT * FROM orders WHERE id = ? AND user_id = ?', [req.params.id, req.user.id]);
-  if (!order) return res.status(404).json({ error: 'Order not found' });
-  const items = db.all('SELECT * FROM order_items WHERE order_id = ?', [order.id]);
-  res.json({ ...order, items });
+router.get('/:id', auth, async (req, res) => {
+  try {
+    const order = await Order.findOne({ _id: req.params.id, user: req.user.id });
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    res.json(order);
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-router.post('/', auth, (req, res) => {
-  const { address, payment } = req.body;
-  if (!address || !payment) return res.status(400).json({ error: 'Address and payment required' });
+router.post('/', auth, async (req, res) => {
+  try {
+    const { address, payment } = req.body;
+    if (!address || !payment) return res.status(400).json({ error: 'Address and payment required' });
 
-  const cartItems = db.all(`
-    SELECT c.qty, c.size, c.color, p.id as product_id, p.name, p.price, p.image
-    FROM cart c JOIN products p ON c.product_id = p.id
-    WHERE c.user_id = ?
-  `, [req.user.id]);
+    const cartItems = await Cart.find({ user: req.user.id }).populate('product');
+    if (!cartItems.length) return res.status(400).json({ error: 'Cart is empty' });
 
-  if (!cartItems.length) return res.status(400).json({ error: 'Cart is empty' });
+    const subtotal = cartItems.reduce((s, i) => s + i.product.price * i.qty, 0);
+    const tax      = Math.round(subtotal * 0.05);
+    const total    = subtotal + tax;
+    const orderRef = 'FC' + Date.now();
 
-  const subtotal = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
-  const tax      = Math.round(subtotal * 0.05);
-  const total    = subtotal + tax;
-  const orderRef = 'FC' + Date.now();
+    const order = await Order.create({
+      user: req.user.id, orderRef, address, payment, subtotal, tax, total,
+      items: cartItems.map(i => ({
+        product: i.product._id, name: i.product.name,
+        price: i.product.price, qty: i.qty, size: i.size, image: i.product.image
+      }))
+    });
 
-  const result = db.run(
-    'INSERT INTO orders (user_id, order_ref, address, payment, subtotal, tax, total) VALUES (?,?,?,?,?,?,?)',
-    [req.user.id, orderRef, address, payment, subtotal, tax, total]
-  );
-  const orderId = result.lastInsertRowid;
-
-  for (const item of cartItems) {
-    db.run(
-      'INSERT INTO order_items (order_id, product_id, name, price, qty, size, image) VALUES (?,?,?,?,?,?,?)',
-      [orderId, item.product_id, item.name, item.price, item.qty, item.size, item.image]
-    );
-  }
-  db.run('DELETE FROM cart WHERE user_id = ?', [req.user.id]);
-
-  res.status(201).json({ message: 'Order placed', orderId, orderRef });
+    await Cart.deleteMany({ user: req.user.id });
+    res.status(201).json({ message: 'Order placed', orderId: order._id, orderRef });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-router.put('/:id/cancel', auth, (req, res) => {
-  const order = db.get('SELECT * FROM orders WHERE id = ? AND user_id = ?', [req.params.id, req.user.id]);
-  if (!order) return res.status(404).json({ error: 'Order not found' });
-  if (order.status !== 'Confirmed') return res.status(400).json({ error: 'Only confirmed orders can be cancelled' });
-  db.run("UPDATE orders SET status = 'Cancelled' WHERE id = ?", [req.params.id]);
-  res.json({ message: 'Order cancelled' });
+router.put('/:id/cancel', auth, async (req, res) => {
+  try {
+    const order = await Order.findOne({ _id: req.params.id, user: req.user.id });
+    if (!order) return res.status(404).json({ error: 'Order not found' });
+    if (order.status !== 'Confirmed') return res.status(400).json({ error: 'Only confirmed orders can be cancelled' });
+    order.status = 'Cancelled';
+    await order.save();
+    res.json({ message: 'Order cancelled' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 module.exports = router;

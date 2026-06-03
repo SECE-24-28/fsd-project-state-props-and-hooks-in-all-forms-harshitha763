@@ -1,38 +1,41 @@
 const express = require('express');
-const db      = require('../database');
+const { Wishlist } = require('../database');
 const { auth } = require('./auth');
 const router  = express.Router();
 
-router.get('/', auth, (req, res) => {
-  const items = db.all(`
-    SELECT p.* FROM wishlist w
-    JOIN products p ON w.product_id = p.id
-    WHERE w.user_id = ?
-  `, [req.user.id]);
-  res.json(items);
+router.get('/', auth, async (req, res) => {
+  try {
+    const items = await Wishlist.find({ user: req.user.id }).populate('product');
+    res.json(items.map(i => i.product));
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-router.get('/ids', auth, (req, res) => {
-  const ids = db.all('SELECT product_id FROM wishlist WHERE user_id = ?', [req.user.id]).map(r => r.product_id);
-  res.json(ids);
+router.get('/ids', auth, async (req, res) => {
+  try {
+    const items = await Wishlist.find({ user: req.user.id });
+    res.json(items.map(i => i.product));
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-router.post('/', auth, (req, res) => {
-  const { productId } = req.body;
-  if (!productId) return res.status(400).json({ error: 'productId required' });
-
-  const existing = db.get('SELECT id FROM wishlist WHERE user_id=? AND product_id=?', [req.user.id, productId]);
-  if (existing) {
-    db.run('DELETE FROM wishlist WHERE id = ?', [existing.id]);
-    return res.json({ action: 'removed' });
-  }
-  db.run('INSERT INTO wishlist (user_id, product_id) VALUES (?,?)', [req.user.id, productId]);
-  res.json({ action: 'added' });
+router.post('/', auth, async (req, res) => {
+  try {
+    const { productId } = req.body;
+    if (!productId) return res.status(400).json({ error: 'productId required' });
+    const existing = await Wishlist.findOne({ user: req.user.id, product: productId });
+    if (existing) {
+      await existing.deleteOne();
+      return res.json({ action: 'removed' });
+    }
+    await Wishlist.create({ user: req.user.id, product: productId });
+    res.json({ action: 'added' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-router.delete('/', auth, (req, res) => {
-  db.run('DELETE FROM wishlist WHERE user_id = ?', [req.user.id]);
-  res.json({ message: 'Wishlist cleared' });
+router.delete('/', auth, async (req, res) => {
+  try {
+    await Wishlist.deleteMany({ user: req.user.id });
+    res.json({ message: 'Wishlist cleared' });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 module.exports = router;
