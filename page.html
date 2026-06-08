@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FashionCart — India's Premium Fashion Store</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #819A91; --accent: #A7C1A8; --light: #D1D8BE;
+      --dark: #2C3830;    --dark2: #1E2A24;  --bg: #F4F6EF;
+      --muted: #6B7C75;   --border: #C8D4BE; --white: #fff;
+      --gradient: linear-gradient(135deg, #819A91 0%, #A7C1A8 100%);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{font-family:'Poppins',sans-serif;background:var(--white);overflow-x:hidden;color:var(--dark)}
+    ::-webkit-scrollbar{width:7px}
+    ::-webkit-scrollbar-track{background:var(--bg)}
+    ::-webkit-scrollbar-thumb{background:var(--gradient);border-radius:4px}
+
+    /* NAV */
+    .lp-nav{
+      position:fixed;top:0;left:0;right:0;z-index:1000;
+      padding:18px 48px;display:flex;align-items:center;justify-content:space-between;
+      background:rgba(30,42,36,.88);backdrop-filter:blur(16px);
+      border-bottom:1px solid rgba(129,154,145,.2);transition:all .4s;
+    }
+    .lp-nav.scrolled{padding:12px 48px;background:rgba(30,42,36,.97);box-shadow:0 4px 30px rgba(0,0,0,.3)}
+    .lp-brand{
+      font-size:1.6rem;font-weight:900;
+      background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+      text-decoration:none;
+    }
+    .lp-links a{
+      color:rgba(255,255,255,.75);text-decoration:none;font-size:.87rem;font-weight:500;margin-left:24px;
+      transition:color .2s;position:relative;
+    }
+    .lp-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:2px;background:var(--gradient);border-radius:2px;transform:scaleX(0);transition:.3s}
+    .lp-links a:hover{color:var(--accent)}
+    .lp-links a:hover::after{transform:scaleX(1)}
+    .btn-nav-login{background:rgba(129,154,145,.2);border:1px solid rgba(129,154,145,.4);color:var(--accent)!important;padding:8px 22px;border-radius:50px;font-weight:600;font-size:.85rem;text-decoration:none;transition:all .3s}
+    .btn-nav-login:hover{background:rgba(129,154,145,.35);color:white!important}
+    .btn-nav-signup{background:var(--gradient);border:none;color:white!important;padding:8px 22px;border-radius:50px;font-weight:700;font-size:.85rem;text-decoration:none;margin-left:10px;transition:all .3s;box-shadow:0 4px 14px rgba(129,154,145,.4)}
+    .btn-nav-signup:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(129,154,145,.5)}
+
+    /* HERO */
+    .hero{
+      min-height:100vh;
+      background:linear-gradient(145deg,#0d1410 0%,#1E2A24 40%,#2C3830 70%,#3a4e42 100%);
+      display:flex;align-items:center;justify-content:center;
+      text-align:center;padding:120px 20px 80px;position:relative;overflow:hidden;
+    }
+    .hero::before{
+      content:'';position:absolute;inset:0;
+      background-image:linear-gradient(rgba(129,154,145,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(129,154,145,.04) 1px,transparent 1px);
+      background-size:50px 50px;pointer-events:none;
+    }
+    .orb{position:absolute;border-radius:50%;filter:blur(80px);opacity:.2;animation:drift 8s ease-in-out infinite alternate}
+    .orb1{width:500px;height:500px;background:#819A91;top:-100px;right:-100px;animation-delay:0s}
+    .orb2{width:400px;height:400px;background:#A7C1A8;bottom:-80px;left:-80px;animation-delay:-3s}
+    .orb3{width:280px;height:280px;background:#D1D8BE;top:40%;left:50%;transform:translate(-50%,-50%);animation-delay:-5s}
+    @keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(30px,20px) scale(1.08)}}
+    .particle{position:fixed;border-radius:50%;background:rgba(129,154,145,.5);animation:floatUp linear infinite;pointer-events:none}
+    @keyframes floatUp{0%{transform:translateY(100vh);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh);opacity:0}}
+
+    .hero-content{position:relative;z-index:2;max-width:800px}
+    .hero-eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      background:rgba(129,154,145,.18);border:1px solid rgba(129,154,145,.4);
+      color:#c5d9ce;padding:7px 20px;border-radius:50px;
+      font-size:.82rem;font-weight:600;letter-spacing:.5px;margin-bottom:28px;
+      animation:fadeDown .7s ease both;
+    }
+    .hero h1{
+      font-size:clamp(2.8rem,6vw,5rem);font-weight:900;color:white;
+      line-height:1.1;margin-bottom:22px;animation:fadeDown .7s ease .1s both;
+    }
+    .hero h1 .grad{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero p{font-size:1.1rem;color:rgba(255,255,255,.62);max-width:540px;margin:0 auto 40px;line-height:1.8;animation:fadeDown .7s ease .2s both}
+    .hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;animation:fadeDown .7s ease .3s both}
+    .btn-hp{
+      background:var(--gradient);color:white;border:none;padding:15px 42px;
+      border-radius:50px;font-weight:700;font-size:1rem;text-decoration:none;
+      display:inline-flex;align-items:center;gap:10px;
+      box-shadow:0 8px 30px rgba(129,154,145,.45);transition:all .3s;
+    }
+    .btn-hp:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(129,154,145,.6);color:white}
+    .btn-ho{
+      background:transparent;color:rgba(255,255,255,.85);
+      border:2px solid rgba(129,154,145,.5);padding:15px 42px;
+      border-radius:50px;font-weight:700;font-size:1rem;text-decoration:none;
+      display:inline-flex;align-items:center;gap:10px;transition:all .3s;
+    }
+    .btn-ho:hover{border-color:var(--accent);background:rgba(129,154,145,.15);color:white}
+
+    .hero-stats{
+      display:flex;justify-content:center;margin-top:60px;
+      background:rgba(255,255,255,.04);border:1px solid rgba(129,154,145,.2);
+      border-radius:20px;overflow:hidden;flex-wrap:wrap;
+      animation:fadeDown .7s ease .4s both;
+    }
+    .hstat{flex:1;min-width:120px;text-align:center;padding:22px 24px;border-right:1px solid rgba(129,154,145,.15);transition:background .3s}
+    .hstat:last-child{border-right:none}
+    .hstat:hover{background:rgba(129,154,145,.1)}
+    .hstat .num{font-size:1.9rem;font-weight:900;color:white;display:block;line-height:1}
+    .hstat .num span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hstat .lbl{font-size:.72rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px;margin-top:4px;display:block}
+
+    .scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.3);font-size:.72rem;text-align:center;z-index:2;animation:bounceY 2.5s ease-in-out infinite}
+    @keyframes bounceY{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-22px)}to{opacity:1;transform:translateY(0)}}
+
+    /* SECTIONS */
+    .sec{padding:90px 0}
+    .sec-white{background:white}
+    .sec-soft{background:var(--bg)}
+    .sec-dark{background:var(--dark2)}
+    .sec-head{text-align:center;margin-bottom:50px}
+    .sec-head h2{font-size:2.3rem;font-weight:900;color:var(--dark)}
+    .sec-head h2 span{background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .sec-head p{color:var(--muted);margin-top:8px;font-size:.95rem}
+    .sec-line{width:56px;height:4px;background:var(--gradient);border-radius:2px;margin:12px auto 0}
+    .sec-head-light h2{color:white}
+    .sec-head-light p{color:rgba(255,255,255,.5)}
+
+    /* FEATURES */
+    .feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+    .feat-card{background:white;border-radius:18px;padding:30px 22px;text-align:center;box-shadow:0 4px 20px rgba(44,56,48,.08);border:1px solid var(--border);transition:all .3s}
+    .feat-card:hover{transform:translateY(-6px);box-shadow:0 14px 40px rgba(44,56,48,.13)}
+    .feat-ico{width:62px;height:62px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin:0 auto 16px;background:linear-gradient(135deg,rgba(129,154,145,.15),rgba(167,193,168,.15));color:var(--primary);transition:all .3s}
+    .feat-card:hover .feat-ico{background:var(--gradient);color:white;transform:scale(1.1)}
+    .feat-card h5{font-weight:700;font-size:.95rem;color:var(--dark);margin-bottom:6px}
+    .feat-card p{color:var(--muted);font-size:.84rem;margin:0}
+
+    /* CATEGORIES */
+    .cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .cat-card{position:relative;border-radius:20px;overflow:hidden;cursor:pointer;transition:all .35s}
+    .cat-card:hover{transform:scale(1.025);box-shadow:0 20px 50px rgba(44,56,48,.2)}
+    .cat-card.big{grid-row:span 2}
+    .cat-card img{width:100%;object-fit:cover;display:block;transition:transform .5s}
+    .cat-card:hover img{transform:scale(1.07)}
+    .cat-card.big img{height:500px}
+    .cat-card:not(.big) img{height:240px}
+    .cat-ov{
+      position:absolute;inset:0;
+      background:linear-gradient(to top,rgba(30,42,36,.82) 0%,rgba(30,42,36,.1) 55%,transparent 100%);
+      display:flex;flex-direction:column;justify-content:flex-end;padding:24px;transition:background .3s;
+    }
+    .cat-card:hover .cat-ov{background:linear-gradient(to top,rgba(44,56,48,.88) 0%,rgba(129,154,145,.15) 100%)}
+    .cat-ov h4{color:white;font-weight:800;font-size:1.15rem;margin:0 0 4px}
+    .cat-ov span{color:rgba(255,255,255,.75);font-size:.82rem}
+    .cat-shopbtn{margin-top:12px;display:inline-flex;align-items:center;gap:6px;background:white;color:var(--dark);padding:7px 18px;border-radius:50px;font-size:.8rem;font-weight:700;width:fit-content;transform:translateY(8px);opacity:0;transition:all .3s}
+    .cat-card:hover .cat-shopbtn{transform:translateY(0);opacity:1;color:var(--primary)}
+
+    /* TRENDING PRODUCTS */
+    .prod-grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+    .pp-card{background:white;border-radius:18px;overflow:hidden;box-shadow:0 2px 14px rgba(44,56,48,.08);border:1px solid var(--border);transition:all .35s}
+    .pp-card:hover{transform:translateY(-8px);box-shadow:0 18px 44px rgba(44,56,48,.15);border-color:rgba(129,154,145,.3)}
+    .pp-wrap{overflow:hidden;height:240px;position:relative}
+    .pp-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+    .pp-card:hover .pp-wrap img{transform:scale(1.08)}
+    .pp-disc{position:absolute;top:12px;right:12px;background:var(--gradient);color:white;padding:4px 10px;border-radius:50px;font-size:.7rem;font-weight:700}
+    .pp-bdg{position:absolute;top:12px;left:12px;background:var(--dark);color:white;padding:4px 10px;border-radius:50px;font-size:.7rem;font-weight:700}
+    .pp-body{padding:14px 16px 18px}
+    .pp-cat{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+    .pp-name{font-weight:700;font-size:.93rem;color:var(--dark);margin:4px 0 8px}
+    .pp-price{font-weight:800;color:var(--primary);font-size:1rem}
+    .pp-old{font-size:.78rem;color:#bbb;text-decoration:line-through;margin-left:6px}
+    .pp-stars{color:#b5a45a;font-size:.72rem}
+    .skeleton{background:linear-gradient(90deg,#f0f0f0 25%,#e8e8e8 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+    @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    /* TESTIMONIALS */
+    .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+    .testi-card{background:rgba(255,255,255,.04);border:1px solid rgba(129,154,145,.18);border-radius:20px;padding:28px;transition:all .35s;position:relative;overflow:hidden}
+    .testi-card::before{content:'"';position:absolute;top:-10px;right:20px;font-size:7rem;font-weight:900;color:rgba(129,154,145,.08);line-height:1;pointer-events:none}
+    .testi-card:hover{border-color:rgba(129,154,145,.4);transform:translateY(-5px);background:rgba(129,154,145,.07)}
+    .testi-stars{color:#b5a45a;font-size:.85rem;margin-bottom:14px}
+    .testi-txt{color:rgba(255,255,255,.65);font-size:.88rem;line-height:1.8;margin-bottom:20px}
+    .testi-author{display:flex;align-items:center;gap:12px}
+    .testi-av{width:46px;height:46px;border-radius:50%;object-fit:cover;border:2px solid var(--primary)}
+    .testi-name{color:white;font-weight:700;font-size:.88rem}
+    .testi-loc{color:rgba(255,255,255,.4);font-size:.75rem}
+
+    /* CTA */
+    .cta-sec{background:var(--gradient);padding:90px 20px;text-align:center;position:relative;overflow:hidden}
+    .cta-sec::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+    .cta-sec h2{font-size:2.5rem;font-weight:900;color:white;margin-bottom:14px;position:relative}
+    .cta-sec p{color:rgba(255,255,255,.88);font-size:1.05rem;margin-bottom:36px;position:relative}
+    .btn-cta-w{background:white;color:var(--dark);padding:15px 40px;border-radius:50px;font-weight:700;font-size:.98rem;text-decoration:none;display:inline-flex;align-items:center;gap:10px;box-shadow:0 8px 28px rgba(0,0,0,.15);transition:all .3s;position:relative}
+    .btn-cta-w:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(0,0,0,.25);color:var(--dark)}
+    .btn-cta-g{background:transparent;color:white;border:2px solid rgba(255,255,255,.5);padding:15px 40px;border-radius:50px;font-weight:700;font-size:.98rem;text-decoration:none;display:inline-flex;align-items:center;gap:10px;transition:all .3s;position:relative;margin-left:14px}
+    .btn-cta-g:hover{border-color:white;background:rgba(255,255,255,.12);color:white;transform:translateY(-2px)}
+
+    /* FOOTER */
+    .lp-footer{background:#0a0e0c;padding:64px 0 0;color:rgba(255,255,255,.45)}
+    .lp-footer .brand{font-size:1.5rem;font-weight:900;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block;margin-bottom:12px}
+    .lp-footer p{font-size:.875rem;color:rgba(255,255,255,.4);line-height:1.8}
+    .lp-footer h6{color:white;font-weight:700;margin-bottom:16px;font-size:.9rem}
+    .lp-footer a{color:rgba(255,255,255,.4);text-decoration:none;font-size:.875rem;display:block;margin-bottom:9px;transition:all .25s}
+    .lp-footer a:hover{color:var(--accent);padding-left:4px}
+    .socials{display:flex;gap:8px;margin-top:16px}
+    .socials a{width:36px;height:36px;background:rgba(129,154,145,.12);border:1px solid rgba(129,154,145,.2);border-radius:10px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:.9rem;text-decoration:none;transition:all .3s;margin-bottom:0!important;padding:0!important}
+    .socials a:hover{background:var(--gradient);border-color:transparent;color:white;transform:translateY(-2px)}
+    .footer-bot{border-top:1px solid rgba(129,154,145,.1);padding:22px 0;text-align:center;font-size:.82rem;color:rgba(255,255,255,.25);margin-top:52px}
+
+    /* REVEAL */
+    .reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .d1{transition-delay:.1s}.d2{transition-delay:.2s}.d3{transition-delay:.3s}
+
+    @media(max-width:991px){.lp-links{display:none}.cat-grid{grid-template-columns:repeat(2,1fr)}.cat-card.big{grid-row:span 1}.cat-card.big img{height:240px}.prod-grid-4{grid-template-columns:repeat(2,1fr)}.testi-grid{grid-template-columns:1fr}.feat-grid{grid-template-columns:repeat(2,1fr)}.btn-cta-g{margin-left:0}}
+    @media(max-width:576px){.hero h1{font-size:2.4rem}.lp-nav{padding:14px 20px}.lp-nav.scrolled{padding:10px 20px}}
+  </style>
+<script src="config.js"></script></head>
+<body>
+<div id="ptcls"></div>
+
+<!-- NAVBAR -->
+<nav class="lp-nav" id="navbar">
+  <a href="page.html" class="lp-brand"><i class="fas fa-shopping-bag me-2"></i>FashionCart</a>
+  <div class="lp-links">
+    <a href="#features">Features</a><a href="#categories">Categories</a>
+    <a href="#trending">Trending</a><a href="#reviews">Reviews</a>
+    <a href="about-us.html">About</a><a href="contact-us.html">Contact</a>
+  </div>
+  <div class="d-flex align-items-center">
+    <a href="login.html" class="btn-nav-login">Login</a>
+    <a href="signup.html" class="btn-nav-signup"><i class="fas fa-user-plus me-1"></i>Sign Up Free</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow"><i class="fas fa-leaf"></i>India's Premium Fashion Destination</div>
+    <h1>Dress Up.<br><span class="grad">Stand Out.</span></h1>
+    <p>Thousands of curated outfits for Women, Men, Kids & more — delivered to your doorstep at unbeatable prices.</p>
+    <div class="hero-btns">
+      <a href="signup.html" class="btn-hp"><i class="fas fa-shopping-bag"></i>Start Shopping Free</a>
+      <a href="login.html"  class="btn-ho"><i class="fas fa-sign-in-alt"></i>Already a member</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat"><span class="num"><span>50K</span>+</span><span class="lbl">Happy Customers</span></div>
+      <div class="hstat"><span class="num"><span>65</span>+</span><span class="lbl">Products</span></div>
+      <div class="hstat"><span class="num"><span>6</span></span><span class="lbl">Categories</span></div>
+      <div class="hstat"><span class="num"><span>70</span>%</span><span class="lbl">Max Discount</span></div>
+      <div class="hstat"><span class="num"><span>24/7</span></span><span class="lbl">Support</span></div>
+    </div>
+  </div>
+  <div class="scroll-hint"><i class="fas fa-chevron-down d-block mb-1"></i>Scroll</div>
+</section>
+
+<!-- FEATURES -->
+<section class="sec sec-soft" id="features">
+  <div class="container">
+    <div class="sec-head reveal">
+      <h2>Why Choose <span>FashionCart?</span></h2>
+      <p>Everything you need for a perfect shopping experience</p>
+      <div class="sec-line"></div>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card reveal d1"><div class="feat-ico"><i class="fas fa-truck"></i></div><h5>Free Delivery</h5><p>On orders above ₹499. Fast & reliable nationwide.</p></div>
+      <div class="feat-card reveal d2"><div class="feat-ico"><i class="fas fa-undo"></i></div><h5>Easy Returns</h5><p>30-day hassle-free return policy. No questions asked.</p></div>
+      <div class="feat-card reveal d3"><div class="feat-ico"><i class="fas fa-lock"></i></div><h5>Secure Payments</h5><p>100% encrypted. Cards, UPI &amp; COD accepted.</p></div>
+      <div class="feat-card reveal" style="transition-delay:.4s"><div class="feat-ico"><i class="fas fa-headset"></i></div><h5>24/7 Support</h5><p>Our team is always ready to help you anytime.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="sec sec-white" id="categories">
+  <div class="container">
+    <div class="sec-head reveal">
+      <h2>Shop by <span>Category</span></h2>
+      <p>Find your perfect style across all our curated collections</p>
+      <div class="sec-line"></div>
+    </div>
+    <div class="cat-grid reveal">
+      <div class="cat-card big" onclick="goShop('women')">
+        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1470&auto=format&fit=crop" alt="Women" loading="lazy">
+        <div class="cat-ov"><h4><i class="fas fa-female me-2"></i>Women's Fashion</h4><span>Dresses, Sarees, Tops & More</span><span class="cat-shopbtn">Shop Now <i class="fas fa-arrow-right"></i></span></div>
+      </div>
+      <div class="cat-card" onclick="goShop('men')">
+        <img src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?q=80&w=1471&auto=format&fit=crop" alt="Men" loading="lazy">
+        <div class="cat-ov"><h4><i class="fas fa-male me-2"></i>Men's Fashion</h4><span>Shirts, Jackets, Kurtas & More</span><span class="cat-shopbtn">Shop Now <i class="fas fa-arrow-right"></i></span></div>
+      </div>
+      <div class="cat-card" onclick="goShop('accessories')">
+        <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=687&auto=format&fit=crop" alt="Accessories" loading="lazy">
+        <div class="cat-ov"><h4><i class="fas fa-gem me-2"></i>Accessories</h4><span>Bags, Watches, Belts & More</span><span class="cat-shopbtn">Shop Now <i class="fas fa-arrow-right"></i></span></div>
+      </div>
+      <div class="cat-card" onclick="goShop('kids')">
+        <img src="https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?q=80&w=687&auto=format&fit=crop" alt="Kids" loading="lazy">
+        <div class="cat-ov"><h4><i class="fas fa-child me-2"></i>Kids' Wear</h4><span>Cute & Comfy for Little Ones</span><span class="cat-shopbtn">Shop Now <i class="fas fa-arrow-right"></i></span></div>
+      </div>
+      <div class="cat-card" onclick="goShop('ethnic')">
+        <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=687&auto=format&fit=crop" alt="Ethnic" loading="lazy">
+        <div class="cat-ov"><h4><i class="fas fa-star me-2"></i>Ethnic Wear</h4><span>Sherwanis, Lehengas & More</span><span class="cat-shopbtn">Shop Now <i class="fas fa-arrow-right"></i></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRENDING -->
+<section class="sec sec-soft" id="trending">
+  <div class="container">
+    <div class="sec-head reveal">
+      <h2>🌿 Trending <span>Right Now</span></h2>
+      <p>Our most loved products this season — live from our store</p>
+      <div class="sec-line"></div>
+    </div>
+    <div class="prod-grid-4 reveal" id="trendGrid">
+      <div class="pp-card"><div class="pp-wrap skeleton" style="height:240px"></div><div class="pp-body"><div class="skeleton" style="height:10px;border-radius:4px;margin-bottom:8px"></div><div class="skeleton" style="height:14px;border-radius:4px;width:70%"></div></div></div>
+      <div class="pp-card"><div class="pp-wrap skeleton" style="height:240px"></div><div class="pp-body"><div class="skeleton" style="height:10px;border-radius:4px;margin-bottom:8px"></div><div class="skeleton" style="height:14px;border-radius:4px;width:70%"></div></div></div>
+      <div class="pp-card"><div class="pp-wrap skeleton" style="height:240px"></div><div class="pp-body"><div class="skeleton" style="height:10px;border-radius:4px;margin-bottom:8px"></div><div class="skeleton" style="height:14px;border-radius:4px;width:70%"></div></div></div>
+      <div class="pp-card"><div class="pp-wrap skeleton" style="height:240px"></div><div class="pp-body"><div class="skeleton" style="height:10px;border-radius:4px;margin-bottom:8px"></div><div class="skeleton" style="height:14px;border-radius:4px;width:70%"></div></div></div>
+    </div>
+    <div class="text-center mt-5 reveal">
+      <a href="signup.html" class="btn-hp" style="display:inline-flex"><i class="fas fa-th-large"></i>View All Products</a>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="sec sec-dark" id="reviews">
+  <div class="container">
+    <div class="sec-head sec-head-light reveal">
+      <h2>What Customers <span>Are Saying</span></h2>
+      <p>Real reviews from verified shoppers across India</p>
+      <div class="sec-line"></div>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal d1">
+        <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p class="testi-txt">"Amazing quality! The floral dress was exactly as shown. Fast delivery and great packaging. Will definitely shop again!"</p>
+        <div class="testi-author"><img class="testi-av" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Priya"><div><div class="testi-name">Priya S.</div><div class="testi-loc"><i class="fas fa-map-marker-alt me-1" style="color:var(--primary)"></i>Mumbai</div></div></div>
+      </div>
+      <div class="testi-card reveal d2">
+        <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+        <p class="testi-txt">"Best fashion store online. Bought the leather jacket and it's stunning! Premium material and perfect fit. Highly recommend!"</p>
+        <div class="testi-author"><img class="testi-av" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rahul"><div><div class="testi-name">Rahul M.</div><div class="testi-loc"><i class="fas fa-map-marker-alt me-1" style="color:var(--primary)"></i>Delhi</div></div></div>
+      </div>
+      <div class="testi-card reveal d3">
+        <div class="testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+        <p class="testi-txt">"Ordered an anarkali suit for my wedding. Got so many compliments! Vibrant colors and superb stitching. Love FashionCart!"</p>
+        <div class="testi-author"><img class="testi-av" src="https://randomuser.me/api/portraits/women/68.jpg" alt="Ananya"><div><div class="testi-name">Ananya R.</div><div class="testi-loc"><i class="fas fa-map-marker-alt me-1" style="color:var(--primary)"></i>Bangalore</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec">
+  <div class="container reveal">
+    <h2>Ready to Elevate Your Style?</h2>
+    <p>Join 50,000+ happy customers. Create your free account and get 20% off your first order!</p>
+    <div class="d-flex gap-3 justify-content-center flex-wrap">
+      <a href="signup.html" class="btn-cta-w"><i class="fas fa-user-plus"></i>Create Free Account</a>
+      <a href="login.html"  class="btn-cta-g"><i class="fas fa-sign-in-alt"></i>Sign In</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="lp-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-4 mb-2">
+        <span class="brand"><i class="fas fa-shopping-bag me-2"></i>FashionCart</span>
+        <p>India's premium online fashion destination. Trendy clothes for every occasion at unbeatable prices.</p>
+        <div class="socials">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="col-6 col-md-2"><h6>Shop</h6><a href="login.html">Women's Fashion</a><a href="login.html">Men's Fashion</a><a href="login.html">Kids' Wear</a><a href="login.html">Ethnic Wear</a><a href="login.html">Accessories</a></div>
+      <div class="col-6 col-md-2"><h6>Company</h6><a href="about-us.html">About Us</a><a href="contact-us.html">Contact</a><a href="faq.html">FAQ</a><a href="privacy-policy.html">Privacy Policy</a><a href="terms-conditions.html">Terms</a></div>
+      <div class="col-6 col-md-2"><h6>Account</h6><a href="login.html">Login</a><a href="signup.html">Sign Up</a><a href="login.html">My Orders</a><a href="login.html">Wishlist</a></div>
+      <div class="col-6 col-md-2"><h6>Contact</h6>
+        <p style="font-size:.82rem;color:rgba(255,255,255,.4);margin-bottom:8px"><i class="fas fa-envelope me-2" style="color:var(--primary)"></i>support@fashioncart.in</p>
+        <p style="font-size:.82rem;color:rgba(255,255,255,.4);margin-bottom:8px"><i class="fas fa-phone me-2" style="color:var(--primary)"></i>+91 98765 43210</p>
+        <p style="font-size:.82rem;color:rgba(255,255,255,.4)"><i class="fas fa-map-marker-alt me-2" style="color:var(--primary)"></i>Mumbai, India</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bot"><div class="container">© 2024 FashionCart. All rights reserved. Made with ❤️ in India</div></div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  if (localStorage.getItem('token')) window.location.href = 'index.html';
+  const _API = (location.hostname==='localhost'||location.hostname==='127.0.0.1') ? 'http://localhost:3000/api' : '/api';
+
+  // Particles
+  (function(){const c=document.getElementById('ptcls');for(let i=0;i<16;i++){const p=document.createElement('div');p.className='particle';p.style.cssText=`left:${Math.random()*100}%;width:${Math.random()*4+2}px;height:${Math.random()*4+2}px;animation-duration:${Math.random()*12+8}s;animation-delay:${Math.random()*8}s;z-index:1;`;c.appendChild(p);}})();
+
+  // Navbar scroll
+  window.addEventListener('scroll',()=>document.getElementById('navbar').classList.toggle('scrolled',scrollY>60));
+
+  // Reveal
+  const ro=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target)}})},{threshold:.12});
+  document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+  // Load trending
+  async function loadTrending(){
+    try{
+      const all=await (await fetch(_API+'/products')).json();
+      const top4=[...all].sort((a,b)=>(b.original_price-b.price)-(a.original_price-a.price)).slice(0,4);
+      document.getElementById('trendGrid').innerHTML=top4.map(p=>{
+        const pid=String(p._id||p.id);
+        const disc=Math.round((1-p.price/p.original_price)*100);
+        const stars=Math.floor(Math.random()*2+4);
+        return '<div class="pp-card">'+
+          '<div class="pp-wrap"><img src="'+p.image+'" alt="'+p.name+'" loading="lazy">'+
+          '<span class="pp-disc">-'+disc+'%</span>'+
+          (p.badge?'<span class="pp-bdg">'+p.badge+'</span>':'')+
+          '</div><div class="pp-body">'+
+          '<div class="pp-cat">'+p.category+'</div>'+
+          '<div class="pp-name">'+p.name+'</div>'+
+          '<div class="pp-stars mb-2">'+'<i class="fas fa-star"></i>'.repeat(stars)+(stars<5?'<i class="far fa-star"></i>':'')+' <span style="color:var(--muted);font-size:.7rem">('+Math.floor(Math.random()*180+40)+')</span></div>'+
+          '<span class="pp-price">₹'+p.price.toLocaleString('en-IN')+'</span><span class="pp-old">₹'+p.original_price.toLocaleString('en-IN')+'</span>'+
+          '</div></div>';
+      }).join('');
+    }catch(e){document.getElementById('trendGrid').innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)"><i class="fas fa-leaf fa-2x mb-2 d-block" style="color:var(--primary)"></i>Sign in to browse products</div>';}
+  }
+
+  function goShop(tag){window.location.href=localStorage.getItem('token')?'index.html#'+tag:'login.html';}
+
+  loadTrending();
+</script>
+</body>
+</html>

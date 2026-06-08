@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders — FashionCart</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body{background:var(--bg)}
+    .order-card{background:white;border-radius:16px;box-shadow:0 4px 20px rgba(44,56,48,.07);margin-bottom:20px;overflow:hidden;border:1px solid var(--border)}
+    .order-head{background:var(--gradient-dark,linear-gradient(135deg,#2C3830,#1E2A24));color:white;padding:16px 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+    .order-head .ref{font-weight:700;font-size:1rem}
+    .order-head .date{font-size:.8rem;opacity:.65;margin-top:2px}
+    .status-pill{padding:5px 14px;border-radius:50px;font-size:.78rem;font-weight:700}
+    .s-Confirmed{background:#e8f0ee;color:#2C3830}
+    .s-Processing{background:#dbeafe;color:#1e40af}
+    .s-Shipped{background:#d0f0e8;color:#0a5c40}
+    .s-Delivered{background:#d1e7dd;color:#0a3622}
+    .s-Cancelled{background:#f5eeee;color:#8b3a3a}
+    .order-img{width:58px;height:58px;object-fit:cover;border-radius:8px;flex-shrink:0}
+    .tl{display:flex;margin:16px 0 8px}
+    .tl-step{flex:1;text-align:center;position:relative}
+    .tl-step::before{content:'';position:absolute;top:13px;left:-50%;width:100%;height:2px;background:var(--border);z-index:0}
+    .tl-step:first-child::before{display:none}
+    .tl-dot{width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 6px;font-size:.65rem;color:var(--muted);position:relative;z-index:1}
+    .tl-step.done .tl-dot{background:var(--primary);color:white}
+    .tl-step.active .tl-dot{background:var(--dark);color:white}
+    .tl-step.done::before{background:var(--primary)}
+    .tl-lbl{font-size:.65rem;color:var(--muted)}
+    .tl-step.done .tl-lbl{color:var(--primary)}
+    .tl-step.active .tl-lbl{color:var(--dark);font-weight:600}
+    .empty-state{text-align:center;padding:80px 20px}
+    .spinner-wrap{text-align:center;padding:60px;color:var(--muted)}
+  </style>
+</head>
+<body>
+<nav class="top-navbar navbar px-3 px-lg-5">
+  <a class="nav-brand" href="index.html"><i class="fas fa-shopping-bag me-2"></i>FashionCart</a>
+  <div class="d-flex align-items-center gap-2">
+    <a href="index.html" class="nav-icon-btn">Home</a>
+    <button class="nav-icon-btn cart-btn" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas"><i class="fas fa-shopping-cart"></i> Cart <span class="badge bg-dark ms-1" id="cartCount">0</span></button>
+    <div class="dropdown"><button class="nav-icon-btn dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-user-circle"></i> <span id="userDisplay">User</span></button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2" style="color:var(--primary)"></i>Profile</a></li>
+        <li><a class="dropdown-item" href="wishlist.html"><i class="fas fa-heart me-2 text-danger"></i>Wishlist</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-5">
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <h3 class="fw-bold mb-0"><i class="fas fa-box me-2" style="color:var(--primary)"></i>My Orders</h3>
+    <a href="index.html" class="btn btn-outline-secondary btn-sm"><i class="fas fa-shopping-bag me-1"></i>Shop More</a>
+  </div>
+  <div id="ordersWrap"><div class="spinner-wrap"><i class="fas fa-spinner fa-spin fa-2x mb-3 d-block" style="color:var(--primary)"></i>Loading your orders…</div></div>
+</div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+  <div class="offcanvas-header"><h5 class="offcanvas-title text-white"><i class="fas fa-shopping-cart me-2"></i>Cart</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
+  <div class="offcanvas-body d-flex flex-column"><div id="cartItems" class="flex-grow-1"></div><div class="border-top pt-3 mt-auto"><div class="d-flex justify-content-between fw-bold fs-5 mb-3"><span>Total</span><span style="color:var(--primary)">₹<span id="cartTotal">0</span></span></div><a href="checkout.html" class="btn w-100 fw-bold mb-2 text-white" style="background:var(--dark)">Checkout</a><button class="btn btn-outline-secondary w-100" onclick="clearCart()">Clear Cart</button></div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="config.js"></script><script src="api.js"></script>
+<script>
+  if (!isLoggedIn()) location.href = 'login.html';
+  const STATUS_ORDER = ['Confirmed','Processing','Shipped','Delivered'];
+
+  function buildTimeline(status) {
+    if (status === 'Cancelled') return '<div class="text-danger small fw-semibold mt-2"><i class="fas fa-times-circle me-1"></i>Order Cancelled</div>';
+    const step = STATUS_ORDER.indexOf(status);
+    return '<div class="tl">' + STATUS_ORDER.map((s,i) =>
+      '<div class="tl-step ' + (i < step ? 'done' : i === step ? 'active' : '') + '">' +
+      '<div class="tl-dot"><i class="fas fa-' + ['check','cog','truck','home'][i] + ' fa-xs"></i></div>' +
+      '<div class="tl-lbl">' + s + '</div></div>'
+    ).join('') + '</div>';
+  }
+
+  async function renderOrders() {
+    const wrap = document.getElementById('ordersWrap');
+    try {
+      const orders = await api('GET', '/orders');
+      if (!orders.length) {
+        wrap.innerHTML = '<div class="empty-state"><i class="fas fa-box-open fa-4x mb-3 d-block" style="color:var(--border)"></i><h5 class="text-muted">No orders yet</h5><p class="text-muted">Looks like you haven\'t placed any orders.</p><a href="index.html" class="btn text-white mt-3 fw-bold px-4" style="background:var(--gradient);border:none">Start Shopping</a></div>';
+        return;
+      }
+      wrap.innerHTML = orders.map(o =>
+        '<div class="order-card">' +
+        '<div class="order-head"><div><div class="ref"><i class="fas fa-hashtag me-1"></i>' + o.orderRef + '</div><div class="date">' + new Date(o.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) + '</div></div>' +
+        '<div class="d-flex align-items-center gap-3"><span class="status-pill s-' + o.status + '">' + o.status + '</span><span class="fw-bold fs-5">₹' + o.total.toLocaleString('en-IN') + '</span></div></div>' +
+        '<div class="p-4">' +
+        buildTimeline(o.status) +
+        '<hr>' +
+        '<div class="mb-3">' + o.items.map(i =>
+          '<div class="d-flex align-items-center gap-3 mb-3">' +
+          '<img src="' + (i.image||'https://via.placeholder.com/58') + '" class="order-img" alt="' + i.name + '">' +
+          '<div class="flex-grow-1"><div class="fw-semibold">' + i.name + '</div><div class="text-muted small">Qty: ' + i.qty + (i.size?' · Size: '+i.size:'') + ' · ₹' + i.price.toLocaleString('en-IN') + ' each</div></div>' +
+          '<div class="fw-bold" style="color:var(--primary)">₹' + (i.price*i.qty).toLocaleString('en-IN') + '</div>' +
+          '</div>'
+        ).join('') + '</div>' +
+        '<div class="row g-2 small text-muted mb-3"><div class="col-md-12"><i class="fas fa-map-marker-alt me-1" style="color:var(--primary)"></i><strong>Delivery:</strong> ' + o.address + '</div><div class="col-md-6 mt-1"><i class="fas fa-credit-card me-1" style="color:var(--primary)"></i><strong>Payment:</strong> ' + o.payment + '</div></div>' +
+        '<div class="d-flex gap-2 flex-wrap">' +
+        '<button class="btn btn-sm btn-outline-secondary" onclick="reorder(\'' + o._id + '\')"><i class="fas fa-redo me-1"></i>Reorder</button>' +
+        (o.status==='Confirmed'?'<button class="btn btn-sm btn-outline-danger" onclick="cancelOrder(\'' + o._id + '\')"><i class="fas fa-times me-1"></i>Cancel Order</button>':'') +
+        '</div></div></div>'
+      ).join('');
+    } catch(e) {
+      wrap.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-triangle fa-3x mb-3 d-block" style="color:var(--primary)"></i><h5 class="text-muted">Could not load orders</h5><p class="text-muted">' + e.message + '</p></div>';
+    }
+  }
+
+  async function cancelOrder(id) {
+    if (!confirm('Cancel this order?')) return;
+    try { await api('PUT', '/orders/'+id+'/cancel'); showToast('Order cancelled','info'); renderOrders(); } catch(e) { showToast(e.message,'danger'); }
+  }
+
+  async function reorder(id) {
+    try {
+      const order = await api('GET', '/orders/'+id);
+      for (const item of order.items) await api('POST', '/cart', {productId:item.product, qty:item.qty, size:item.size||''});
+      await loadCart(); showToast('Items added to cart!','success');
+    } catch(e) { showToast(e.message,'danger'); }
+  }
+
+  renderOrders();
+</script>
+</body>
+</html>

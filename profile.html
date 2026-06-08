@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile — FashionCart</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body{background:var(--bg)}
+    .avatar-ring{width:90px;height:90px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:2.4rem;color:white;margin:0 auto 14px;font-weight:900}
+    .stat-box{text-align:center;padding:18px 10px;background:white;border-radius:14px;box-shadow:0 2px 12px rgba(44,56,48,.06);border:1px solid var(--border)}
+    .stat-box .num{font-size:1.8rem;font-weight:900;color:var(--primary)}
+    .stat-box .lbl{font-size:.75rem;color:var(--muted)}
+    .tab-pill{border:none;background:none;padding:10px 22px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;transition:.2s;font-size:.9rem;font-family:'Poppins',sans-serif}
+    .tab-pill.active{color:var(--primary);border-color:var(--primary)}
+    .tab-pane{display:none}.tab-pane.active{display:block}
+    .profile-card{background:white;border-radius:16px;box-shadow:0 4px 20px rgba(44,56,48,.07);overflow:hidden;border:1px solid var(--border)}
+    .btn-save{background:var(--gradient);border:none;color:white;font-weight:700;border-radius:10px;padding:11px 32px;transition:all .3s;font-family:'Poppins',sans-serif}
+    .btn-save:hover{opacity:.9;transform:translateY(-1px);box-shadow:0 8px 24px rgba(129,154,145,.4)}
+    .sidebar-card{background:white;border-radius:16px;box-shadow:0 4px 20px rgba(44,56,48,.07);padding:24px;text-align:center;border:1px solid var(--border)}
+    .quick-link{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--text);text-decoration:none;transition:all .2s;font-size:.9rem;font-weight:500}
+    .quick-link:hover{background:var(--bg);color:var(--primary)}
+    .member-badge{display:inline-block;background:var(--gradient);color:white;padding:5px 16px;border-radius:50px;font-size:.78rem;font-weight:700}
+  </style>
+</head>
+<body>
+<nav class="top-navbar navbar px-3 px-lg-5">
+  <a class="nav-brand" href="index.html"><i class="fas fa-shopping-bag me-2"></i>FashionCart</a>
+  <div class="d-flex align-items-center gap-2">
+    <a href="index.html" class="nav-icon-btn">Home</a>
+    <button class="nav-icon-btn cart-btn" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas"><i class="fas fa-shopping-cart"></i> Cart <span class="badge bg-dark ms-1" id="cartCount">0</span></button>
+    <div class="dropdown"><button class="nav-icon-btn dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-user-circle"></i> <span id="userDisplay">User</span></button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2" style="color:var(--primary)"></i>Profile</a></li>
+        <li><a class="dropdown-item" href="wishlist.html"><i class="fas fa-heart me-2 text-danger"></i>Wishlist</a></li>
+        <li><a class="dropdown-item" href="orders.html"><i class="fas fa-box me-2" style="color:var(--primary)"></i>Orders</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container py-5">
+  <div class="row g-4">
+    <div class="col-lg-3">
+      <div class="sidebar-card mb-4">
+        <div class="avatar-ring" id="avatarEl">U</div>
+        <h5 class="fw-bold mb-1" id="sidebarName">Loading…</h5>
+        <p class="text-muted small mb-3" id="sidebarEmail"></p>
+        <span class="member-badge" id="memberBadge">Member</span>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-6"><div class="stat-box"><div class="num" id="statOrders">—</div><div class="lbl">Orders</div></div></div>
+        <div class="col-6"><div class="stat-box"><div class="num" id="statWish">—</div><div class="lbl">Wishlist</div></div></div>
+      </div>
+      <div class="profile-card p-2">
+        <a href="orders.html"   class="quick-link"><i class="fas fa-box me-2" style="color:var(--primary)"></i>My Orders</a>
+        <a href="wishlist.html" class="quick-link"><i class="fas fa-heart me-2 text-danger"></i>Wishlist</a>
+        <a href="checkout.html" class="quick-link"><i class="fas fa-credit-card me-2" style="color:var(--primary)"></i>Checkout</a>
+        <a href="#" onclick="logout()" class="quick-link text-danger"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+      </div>
+    </div>
+    <div class="col-lg-9">
+      <div class="profile-card">
+        <div class="p-4 border-bottom">
+          <div class="d-flex gap-0 overflow-auto">
+            <button class="tab-pill active" onclick="switchTab('personal',this)">Personal Info</button>
+            <button class="tab-pill" onclick="switchTab('security',this)">Security</button>
+            <button class="tab-pill" onclick="switchTab('address',this)">Address</button>
+          </div>
+        </div>
+        <div class="p-4">
+          <div class="tab-pane active" id="tab-personal">
+            <h5 class="fw-bold mb-4">Personal Information</h5>
+            <form onsubmit="saveProfile(event)">
+              <div class="row g-3">
+                <div class="col-md-6"><label class="form-label fw-semibold">First Name</label><input type="text" class="form-control" id="pfname"></div>
+                <div class="col-md-6"><label class="form-label fw-semibold">Last Name</label><input type="text" class="form-control" id="plname"></div>
+                <div class="col-12"><label class="form-label fw-semibold">Email</label><input type="email" class="form-control" id="pemail" disabled style="background:var(--bg)"></div>
+                <div class="col-12"><label class="form-label fw-semibold">Phone</label><input type="tel" class="form-control" id="pphone"></div>
+                <div class="col-12"><label class="form-label fw-semibold">Gender</label>
+                  <select class="form-select" id="pgender"><option value="">Prefer not to say</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select>
+                </div>
+              </div>
+              <button type="submit" class="btn-save mt-4"><i class="fas fa-save me-2"></i>Save Changes</button>
+            </form>
+          </div>
+          <div class="tab-pane" id="tab-security">
+            <h5 class="fw-bold mb-4">Change Password</h5>
+            <form onsubmit="changePassword(event)">
+              <div class="mb-3"><label class="form-label fw-semibold">Current Password</label><input type="password" class="form-control" id="curPwd" placeholder="Enter current password"></div>
+              <div class="mb-3"><label class="form-label fw-semibold">New Password</label><input type="password" class="form-control" id="newPwd" placeholder="Min. 6 characters"></div>
+              <div class="mb-3"><label class="form-label fw-semibold">Confirm New Password</label><input type="password" class="form-control" id="conPwd" placeholder="Repeat new password"></div>
+              <button type="submit" class="btn-save mt-2"><i class="fas fa-lock me-2"></i>Update Password</button>
+            </form>
+          </div>
+          <div class="tab-pane" id="tab-address">
+            <h5 class="fw-bold mb-4">Saved Address</h5>
+            <form onsubmit="saveAddress(event)">
+              <div class="row g-3">
+                <div class="col-12"><label class="form-label fw-semibold">Address Line 1</label><input type="text" class="form-control" id="aline1" placeholder="House/Flat No., Street"></div>
+                <div class="col-12"><label class="form-label fw-semibold">Address Line 2</label><input type="text" class="form-control" id="aline2" placeholder="Area, Landmark (optional)"></div>
+                <div class="col-md-5"><label class="form-label fw-semibold">City</label><input type="text" class="form-control" id="acity"></div>
+                <div class="col-md-4"><label class="form-label fw-semibold">State</label><input type="text" class="form-control" id="astate"></div>
+                <div class="col-md-3"><label class="form-label fw-semibold">PIN Code</label><input type="text" class="form-control" id="apin" maxlength="6"></div>
+              </div>
+              <button type="submit" class="btn-save mt-4"><i class="fas fa-save me-2"></i>Save Address</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+  <div class="offcanvas-header"><h5 class="offcanvas-title text-white"><i class="fas fa-shopping-cart me-2"></i>Cart</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
+  <div class="offcanvas-body d-flex flex-column"><div id="cartItems" class="flex-grow-1"></div><div class="border-top pt-3 mt-auto"><div class="d-flex justify-content-between fw-bold fs-5 mb-3"><span>Total</span><span style="color:var(--primary)">₹<span id="cartTotal">0</span></span></div><a href="checkout.html" class="btn w-100 fw-bold mb-2 text-white" style="background:var(--dark)">Checkout</a><button class="btn btn-outline-secondary w-100" onclick="clearCart()">Clear Cart</button></div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="config.js"></script><script src="api.js"></script>
+<script>
+  if (!isLoggedIn()) location.href = 'login.html';
+
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  async function loadProfile() {
+    try {
+      const u = await apiGetMe();
+      document.getElementById('sidebarName').textContent = u.firstName + ' ' + u.lastName;
+      document.getElementById('sidebarEmail').textContent = u.email;
+      document.getElementById('avatarEl').textContent = (u.firstName || 'U')[0].toUpperCase();
+      if (u.createdAt) {
+        const since = new Date(u.createdAt).toLocaleDateString('en-IN', {month:'short',year:'numeric'});
+        document.getElementById('memberBadge').textContent = 'Since ' + since;
+      }
+      document.getElementById('pfname').value = u.firstName || '';
+      document.getElementById('plname').value = u.lastName  || '';
+      document.getElementById('pemail').value = u.email     || '';
+      document.getElementById('pphone').value = u.phone     || '';
+      if (u.gender) document.getElementById('pgender').value = u.gender;
+      if (u.address) {
+        document.getElementById('aline1').value = u.address.line1 || '';
+        document.getElementById('aline2').value = u.address.line2 || '';
+        document.getElementById('acity').value  = u.address.city  || '';
+        document.getElementById('astate').value = u.address.state || '';
+        document.getElementById('apin').value   = u.address.pin   || '';
+      }
+      try { const orders = await api('GET','/orders'); document.getElementById('statOrders').textContent = orders.length; } catch { document.getElementById('statOrders').textContent = '0'; }
+      try { const wl = await api('GET','/wishlist'); document.getElementById('statWish').textContent = wl.length; } catch { document.getElementById('statWish').textContent = '0'; }
+    } catch(e) { showToast('Could not load profile: ' + e.message, 'danger'); }
+  }
+
+  async function saveProfile(e) {
+    e.preventDefault();
+    try {
+      await api('PUT','/auth/profile',{firstName:document.getElementById('pfname').value.trim(),lastName:document.getElementById('plname').value.trim(),phone:document.getElementById('pphone').value.trim(),gender:document.getElementById('pgender').value});
+      showToast('Profile updated!','success'); loadProfile();
+    } catch(err) { showToast(err.message,'danger'); }
+  }
+
+  async function changePassword(e) {
+    e.preventDefault();
+    const cur=document.getElementById('curPwd').value, newP=document.getElementById('newPwd').value, con=document.getElementById('conPwd').value;
+    if(newP!==con){showToast('Passwords do not match','danger');return;}
+    if(newP.length<6){showToast('Password must be at least 6 characters','danger');return;}
+    try { await api('PUT','/auth/password',{currentPassword:cur,newPassword:newP}); document.getElementById('pwdForm') && document.getElementById('pwdForm').reset(); showToast('Password changed!','success'); } catch(err) { showToast(err.message,'danger'); }
+  }
+
+  async function saveAddress(e) {
+    e.preventDefault();
+    try {
+      await api('PUT','/auth/address',{line1:document.getElementById('aline1').value.trim(),line2:document.getElementById('aline2').value.trim(),city:document.getElementById('acity').value.trim(),state:document.getElementById('astate').value.trim(),pin:document.getElementById('apin').value.trim()});
+      showToast('Address saved!','success');
+    } catch(err) { showToast(err.message,'danger'); }
+  }
+
+  loadProfile();
+</script>
+</body>
+</html>
