@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop The Look — FashionCart</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body{background:var(--bg);font-family:'Poppins',sans-serif}
+    .stl-hero{background:linear-gradient(135deg,#2C3830,#819A91);padding:70px 20px;text-align:center;color:white}
+    .stl-hero h1{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:800;color:white}
+    .stl-hero p{color:rgba(255,255,255,.8);font-size:1.05rem;max-width:520px;margin:12px auto 0}
+    .look-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+    .look-card{background:white;border-radius:22px;overflow:hidden;box-shadow:0 8px 32px rgba(44,56,48,.1);border:1px solid var(--border);transition:all .4s;cursor:pointer}
+    .look-card:hover{transform:translateY(-10px);box-shadow:0 24px 60px rgba(44,56,48,.2)}
+    .look-img{position:relative;height:380px;overflow:hidden}
+    .look-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s}
+    .look-card:hover .look-img img{transform:scale(1.07)}
+    .look-tag{position:absolute;top:16px;left:16px;background:var(--gradient);color:white;padding:5px 14px;border-radius:50px;font-size:.72rem;font-weight:700;letter-spacing:.5px}
+    .look-hotspots{position:absolute;inset:0}
+    .hotspot{position:absolute;width:28px;height:28px;background:white;border:3px solid var(--primary);border-radius:50%;cursor:pointer;transform:translate(-50%,-50%);transition:all .3s;display:flex;align-items:center;justify-content:center;z-index:2}
+    .hotspot:hover,.hotspot.active{background:var(--primary);border-color:white;transform:translate(-50%,-50%) scale(1.2)}
+    .hotspot i{font-size:.55rem;color:var(--dark);transition:.3s}
+    .hotspot:hover i,.hotspot.active i{color:white}
+    .hotspot-pulse{position:absolute;width:28px;height:28px;border-radius:50%;background:var(--primary);opacity:.4;animation:hotPulse 2s ease-in-out infinite;transform:translate(-50%,-50%);pointer-events:none}
+    @keyframes hotPulse{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.4}50%{transform:translate(-50%,-50%) scale(1.8);opacity:0}}
+    .look-body{padding:20px}
+    .look-title{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--dark);margin-bottom:4px}
+    .look-desc{color:var(--muted);font-size:.85rem;margin-bottom:14px}
+    .look-items{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+    .look-item-thumb{width:52px;height:52px;border-radius:10px;overflow:hidden;border:2px solid var(--border);cursor:pointer;transition:all .3s;flex-shrink:0}
+    .look-item-thumb:hover{border-color:var(--primary);transform:scale(1.1)}
+    .look-item-thumb img{width:100%;height:100%;object-fit:cover}
+    .look-price{font-weight:800;color:var(--primary);font-size:1.05rem}
+    .look-old{font-size:.8rem;color:#bbb;text-decoration:line-through;margin-left:6px}
+    .btn-shop-look{width:100%;background:var(--gradient);border:none;color:white;font-weight:700;border-radius:12px;padding:12px;font-family:'Poppins',sans-serif;cursor:pointer;transition:all .3s;font-size:.9rem}
+    .btn-shop-look:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 8px 24px rgba(129,154,145,.4)}
+    .item-tooltip{position:absolute;background:white;border-radius:12px;padding:12px 14px;box-shadow:0 8px 32px rgba(44,56,48,.2);border:1px solid var(--border);min-width:180px;z-index:10;transform:translateX(-50%);pointer-events:none;opacity:0;transition:opacity .3s}
+    .item-tooltip.show{opacity:1;pointer-events:auto}
+    .item-tooltip img{width:48px;height:48px;object-fit:cover;border-radius:8px;float:left;margin-right:10px}
+    .item-tooltip .tt-name{font-size:.78rem;font-weight:700;color:var(--dark)}
+    .item-tooltip .tt-price{font-size:.75rem;color:var(--primary);font-weight:800}
+    .filter-row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-bottom:40px}
+    .filter-chip{padding:8px 22px;border-radius:50px;border:2px solid var(--border);background:white;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .3s;color:var(--muted)}
+    .filter-chip:hover{border-color:var(--primary);color:var(--primary)}
+    .filter-chip.active{background:var(--gradient);border-color:transparent;color:white;box-shadow:0 4px 14px rgba(129,154,145,.35)}
+    .aov-banner{background:var(--gradient);border-radius:20px;padding:32px 40px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;color:white;margin-top:60px}
+    .aov-banner h3{font-family:'Playfair Display',serif;font-size:1.8rem;color:white;margin:0}
+    .aov-banner p{opacity:.85;margin:0}
+    @media(max-width:991px){.look-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:576px){.look-grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<nav class="top-navbar navbar px-3 px-lg-5">
+  <a class="nav-brand" href="index.html"><i class="fas fa-shopping-bag me-2"></i>FashionCart</a>
+  <div class="d-flex align-items-center gap-2">
+    <a href="index.html" class="nav-icon-btn">Home</a>
+    <button class="nav-icon-btn cart-btn" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas"><i class="fas fa-shopping-cart"></i> Cart <span class="badge bg-dark ms-1" id="cartCount">0</span></button>
+    <div class="dropdown"><button class="nav-icon-btn dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-user-circle"></i> <span id="userDisplay">User</span></button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2" style="color:var(--primary)"></i>Profile</a></li>
+        <li><a class="dropdown-item" href="orders.html"><i class="fas fa-box me-2" style="color:var(--primary)"></i>Orders</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="stl-hero">
+  <div class="container">
+    <div class="mb-3"><span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;padding:6px 18px;border-radius:50px;font-size:.8rem;font-weight:600"><i class="fas fa-star me-2"></i>Curated by Our Style Team · Updated Daily</span></div>
+    <h1>Shop The Look</h1>
+    <p>Complete outfit inspiration — tap any item to add it to cart instantly. Average customers add 2.8 items per look.</p>
+    <div class="d-flex gap-3 justify-content-center mt-4 flex-wrap">
+      <div style="text-align:center"><span style="font-size:1.8rem;font-weight:900;color:white">2.8x</span><br><span style="font-size:.78rem;opacity:.7;text-transform:uppercase;letter-spacing:1px">Higher AOV</span></div>
+      <div style="width:1px;background:rgba(255,255,255,.2)"></div>
+      <div style="text-align:center"><span style="font-size:1.8rem;font-weight:900;color:white">6</span><br><span style="font-size:.78rem;opacity:.7;text-transform:uppercase;letter-spacing:1px">Curated Looks</span></div>
+      <div style="width:1px;background:rgba(255,255,255,.2)"></div>
+      <div style="text-align:center"><span style="font-size:1.8rem;font-weight:900;color:white">24</span><br><span style="font-size:.78rem;opacity:.7;text-transform:uppercase;letter-spacing:1px">Style Items</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5">
+
+  <!-- Filters -->
+  <div class="filter-row" id="filterRow">
+    <button class="filter-chip active" onclick="filterLooks('all',this)">All Looks</button>
+    <button class="filter-chip" onclick="filterLooks('Professional',this)">Office & Work</button>
+    <button class="filter-chip" onclick="filterLooks('Festive',this)">Festive</button>
+    <button class="filter-chip" onclick="filterLooks('Casual',this)">Casual</button>
+    <button class="filter-chip" onclick="filterLooks('Glamour',this)">Date Night</button>
+    <button class="filter-chip" onclick="filterLooks('Streetwear',this)">Streetwear</button>
+    <button class="filter-chip" onclick="filterLooks('Resort',this)">Beach</button>
+  </div>
+
+  <!-- Look Grid -->
+  <div class="look-grid" id="lookGrid"></div>
+
+  <!-- AOV Banner -->
+  <div class="aov-banner">
+    <div>
+      <h3>Can't find your style?</h3>
+      <p>Browse our full collection and build your own look.</p>
+    </div>
+    <div class="d-flex gap-3 flex-wrap">
+      <a href="index.html" style="background:white;color:var(--dark);padding:13px 32px;border-radius:50px;font-weight:700;font-size:.95rem;text-decoration:none;box-shadow:0 4px 16px rgba(0,0,0,.15);display:inline-flex;align-items:center;gap:8px"><i class="fas fa-shopping-bag"></i>Shop All</a>
+      <a href="virtual-tryon.html" style="background:transparent;color:white;padding:13px 32px;border-radius:50px;font-weight:700;font-size:.95rem;text-decoration:none;border:2px solid rgba(255,255,255,.5);display:inline-flex;align-items:center;gap:8px"><i class="fas fa-camera"></i>Virtual Try-On</a>
+    </div>
+  </div>
+</div>
+
+<!-- Cart Offcanvas -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
+  <div class="offcanvas-header"><h5 class="offcanvas-title text-white"><i class="fas fa-shopping-cart me-2"></i>Cart</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
+  <div class="offcanvas-body d-flex flex-column"><div id="cartItems" class="flex-grow-1"></div><div class="border-top pt-3 mt-auto"><div class="d-flex justify-content-between fw-bold fs-5 mb-3"><span>Total</span><span style="color:var(--primary)">₹<span id="cartTotal">0</span></span></div><a href="checkout.html" class="btn w-100 fw-bold mb-2 text-white" style="background:var(--dark)">Checkout</a><button class="btn btn-outline-secondary w-100" onclick="clearCart()">Clear Cart</button></div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="api.js"></script>
+<script>
+  if (!isLoggedIn()) location.href = 'login.html';
+
+  // Hotspot positions per look [top%, left%]
+  const HOTSPOT_POS = [
+    [[70,35],[40,55],[85,65],[25,45]],
+    [[55,40],[30,60],[75,50],[45,70]],
+    [[65,45],[35,65],[80,35],[20,55]],
+    [[60,50],[40,40],[75,65],[30,75]],
+    [[55,35],[35,55],[70,45],[45,65]],
+    [[65,40],[40,60],[80,50],[25,45]],
+  ];
+
+  let activeFilter = 'all';
+
+  function filterLooks(tag, btn) {
+    activeFilter = tag;
+    document.querySelectorAll('.filter-chip').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderLooks();
+  }
+
+  function renderLooks() {
+    const list = activeFilter === 'all'
+      ? LOOK_GALLERY
+      : LOOK_GALLERY.filter(l => l.tag === activeFilter);
+
+    document.getElementById('lookGrid').innerHTML = list.map((look, li) => {
+      const items = look.products.map(id => PRODUCTS.find(p => p.id === id)).filter(Boolean);
+      const totalOriginal = items.reduce((s,p) => s + p.original_price, 0);
+      const totalPrice    = items.reduce((s,p) => s + p.price, 0);
+      const saving        = totalOriginal - totalPrice;
+      const positions     = HOTSPOT_POS[li] || HOTSPOT_POS[0];
+
+      return '<div class="look-card" id="look_' + look.id + '">' +
+        '<div class="look-img">' +
+        '<img src="' + look.img + '" alt="' + look.title + '" loading="lazy">' +
+        '<span class="look-tag">' + look.tag + '</span>' +
+        '<div class="look-hotspots">' +
+        items.map((p, i) => {
+          const pos = positions[i] || [50,50];
+          return '<div class="hotspot-pulse" style="top:' + pos[0] + '%;left:' + pos[1] + '%"></div>' +
+            '<div class="hotspot" style="top:' + pos[0] + '%;left:' + pos[1] + '%" onclick="toggleTooltip(\'' + p.id + '\',\'' + look.id + '\',event)" title="' + p.name + '">' +
+            '<i class="fas fa-plus"></i></div>' +
+            '<div class="item-tooltip" id="tt_' + look.id + '_' + p.id + '" style="top:' + (pos[0]+5) + '%;left:' + pos[1] + '%">' +
+            '<img src="' + p.image + '" alt="' + p.name + '"><div class="tt-name">' + p.name + '</div><div class="tt-price">₹' + p.price.toLocaleString('en-IN') + '</div>' +
+            '<button onclick="quickAdd(\'' + p.id + '\')" style="width:100%;margin-top:8px;padding:6px;background:linear-gradient(135deg,#819A91,#A7C1A8);border:none;border-radius:8px;color:white;font-size:.75rem;font-weight:700;cursor:pointer;font-family:Poppins,sans-serif;clear:both"><i class="fas fa-cart-plus me-1"></i>Add to Cart</button>' +
+            '</div>';
+        }).join('') +
+        '</div></div>' +
+        '<div class="look-body">' +
+        '<div class="look-title">' + look.title + '</div>' +
+        '<div class="look-desc">' + look.desc + ' — ' + items.length + ' pieces</div>' +
+        '<div class="look-items">' +
+        items.map(p =>
+          '<div class="look-item-thumb" title="' + p.name + '" onclick="quickAdd(\'' + p.id + '\')">' +
+          '<img src="' + p.image + '" alt="' + p.name + '" loading="lazy"></div>'
+        ).join('') +
+        '</div>' +
+        '<div class="d-flex align-items-center justify-content-between mb-3">' +
+        '<div><span class="look-price">₹' + totalPrice.toLocaleString('en-IN') + '</span><span class="look-old">₹' + totalOriginal.toLocaleString('en-IN') + '</span>' +
+        '<span class="ms-2 badge" style="background:rgba(129,154,145,.15);color:var(--primary);font-size:.72rem">Save ₹' + saving.toLocaleString('en-IN') + '</span></div>' +
+        '</div>' +
+        '<button class="btn-shop-look" onclick="shopAllLook(\'' + look.id + '\')">' +
+        '<i class="fas fa-bag-shopping me-2"></i>Shop This Look — Add All ' + items.length + ' Items' +
+        '</button>' +
+        '</div></div>';
+    }).join('');
+  }
+
+  function toggleTooltip(productId, lookId, e) {
+    e.stopPropagation();
+    const tt = document.getElementById('tt_' + lookId + '_' + productId);
+    if (!tt) return;
+    const isShowing = tt.classList.contains('show');
+    document.querySelectorAll('.item-tooltip.show').forEach(t => t.classList.remove('show'));
+    document.querySelectorAll('.hotspot.active').forEach(h => h.classList.remove('active'));
+    if (!isShowing) {
+      tt.classList.add('show');
+      e.currentTarget.classList.add('active');
+    }
+  }
+
+  // Close tooltips on outside click
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.item-tooltip.show').forEach(t => t.classList.remove('show'));
+    document.querySelectorAll('.hotspot.active').forEach(h => h.classList.remove('active'));
+  });
+
+  async function quickAdd(productId) {
+    await addToCart(productId, 1, '', '');
+  }
+
+  async function shopAllLook(lookId) {
+    const look = LOOK_GALLERY.find(l => l.id === lookId);
+    if (!look) return;
+    const btn = document.querySelector('#look_' + lookId + ' .btn-shop-look');
+    if (btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding all items…'; btn.disabled = true; }
+    for (const pid of look.products) {
+      await addToCart(pid, 1, '', '');
+    }
+    showToast('All ' + look.products.length + ' items added to cart! 🛍️', 'success');
+    if (btn) { btn.innerHTML = '<i class="fas fa-check me-2"></i>Added to Cart!'; setTimeout(() => { btn.innerHTML = '<i class="fas fa-bag-shopping me-2"></i>Shop This Look — Add All ' + look.products.length + ' Items'; btn.disabled = false; }, 2500); }
+  }
+
+  renderLooks();
+</script>
+</body>
+</html>

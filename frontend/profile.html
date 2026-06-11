@@ -1,249 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile - FashionCart</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .profile-avatar { width:90px; height:90px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); display:flex; align-items:center; justify-content:center; font-size:2.5rem; color:white; margin:0 auto 15px; }
-        .stat-card { text-align:center; padding:20px; border-radius:12px; background:white; box-shadow:0 2px 10px rgba(0,0,0,.06); }
-        .stat-card i { font-size:2rem; margin-bottom:8px; }
-        .tab-btn { border:none; background:none; padding:10px 20px; font-weight:600; color:#999; border-bottom:3px solid transparent; transition:.2s; }
-        .tab-btn.active { color:#667eea; border-color:#667eea; }
-        .tab-content-pane { display:none; }
-        .tab-content-pane.active { display:block; }
-    </style>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile — FashionCart</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body{background:var(--bg)}
+    .avatar-ring{width:90px;height:90px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;font-size:2.4rem;color:white;margin:0 auto 14px;font-weight:900}
+    .stat-box{text-align:center;padding:18px 10px;background:white;border-radius:14px;box-shadow:0 2px 12px rgba(44,56,48,.06);border:1px solid var(--border)}
+    .stat-box .num{font-size:1.8rem;font-weight:900;color:var(--primary)}
+    .stat-box .lbl{font-size:.75rem;color:var(--muted)}
+    .tab-pill{border:none;background:none;padding:10px 22px;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;transition:.2s;font-size:.9rem;font-family:'Poppins',sans-serif}
+    .tab-pill.active{color:var(--primary);border-color:var(--primary)}
+    .tab-pane{display:none}.tab-pane.active{display:block}
+    .profile-card{background:white;border-radius:16px;box-shadow:0 4px 20px rgba(44,56,48,.07);overflow:hidden;border:1px solid var(--border)}
+    .btn-save{background:var(--gradient);border:none;color:white;font-weight:700;border-radius:10px;padding:11px 32px;transition:all .3s;font-family:'Poppins',sans-serif}
+    .btn-save:hover{opacity:.9;transform:translateY(-1px)}
+    .sidebar-card{background:white;border-radius:16px;box-shadow:0 4px 20px rgba(44,56,48,.07);padding:24px;text-align:center;border:1px solid var(--border)}
+    .quick-link{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--text);text-decoration:none;transition:all .2s;font-size:.9rem;font-weight:500}
+    .quick-link:hover{background:var(--bg);color:var(--primary)}
+    .member-badge{display:inline-block;background:var(--gradient);color:white;padding:5px 16px;border-radius:50px;font-size:.78rem;font-weight:700}
+  </style>
 </head>
 <body>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top px-4">
-    <a class="navbar-brand fw-bold" href="index.html"><i class="fas fa-shopping-bag"></i> FashionCart</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"><span class="navbar-toggler-icon"></span></button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <div class="ms-auto d-flex gap-2 align-items-center flex-wrap">
-            <a href="index.html" class="btn btn-outline-light btn-sm">Home</a>
-            <a href="categories.html" class="btn btn-outline-light btn-sm">Categories</a>
-            <button class="btn btn-warning btn-sm position-relative" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
-                <i class="fas fa-shopping-cart"></i> Cart
-                <span class="position-absolute top-0 start-100 translate-middle badge bg-danger" id="cartCount">0</span>
-            </button>
-            <div class="nav-item dropdown">
-                <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <i class="fas fa-user-circle"></i> <span id="userDisplay">User</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
-                    <li><a class="dropdown-item" href="wishlist.html"><i class="fas fa-heart me-2"></i>Wishlist</a></li>
-                    <li><a class="dropdown-item" href="orders.html"><i class="fas fa-box me-2"></i>Orders</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                </ul>
-            </div>
-        </div>
+<nav class="top-navbar navbar px-3 px-lg-5">
+  <a class="nav-brand" href="index.html"><i class="fas fa-shopping-bag me-2"></i>FashionCart</a>
+  <div class="d-flex align-items-center gap-2">
+    <a href="index.html" class="nav-icon-btn">Home</a>
+    <button class="nav-icon-btn cart-btn" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas"><i class="fas fa-shopping-cart"></i> Cart <span class="badge bg-dark ms-1" id="cartCount">0</span></button>
+    <div class="dropdown"><button class="nav-icon-btn dropdown-toggle" data-bs-toggle="dropdown"><i class="fas fa-user-circle"></i> <span id="userDisplay">User</span></button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2" style="color:var(--primary)"></i>Profile</a></li>
+        <li><a class="dropdown-item" href="wishlist.html"><i class="fas fa-heart me-2 text-danger"></i>Wishlist</a></li>
+        <li><a class="dropdown-item" href="orders.html"><i class="fas fa-box me-2" style="color:var(--primary)"></i>Orders</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+      </ul>
     </div>
+  </div>
 </nav>
-
 <div class="container py-5">
-    <div class="row g-4">
-        <!-- Sidebar -->
-        <div class="col-lg-3">
-            <div class="card border-0 shadow-sm p-4 text-center mb-4">
-                <div class="profile-avatar" id="avatarEl">U</div>
-                <h5 class="fw-bold mb-0" id="profileName">User</h5>
-                <p class="text-muted small mb-3" id="profileEmail"></p>
-                <span class="badge" style="background:linear-gradient(135deg,#667eea,#764ba2)" id="memberSince">Member</span>
-            </div>
-            <!-- Stats -->
-            <div class="row g-3 mb-4">
-                <div class="col-6"><div class="stat-card"><i class="fas fa-box text-primary"></i><div class="fw-bold fs-4" id="orderCount">0</div><div class="text-muted small">Orders</div></div></div>
-                <div class="col-6"><div class="stat-card"><i class="fas fa-heart text-danger"></i><div class="fw-bold fs-4" id="wishCount">0</div><div class="text-muted small">Wishlist</div></div></div>
-            </div>
-            <!-- Quick links -->
-            <div class="card border-0 shadow-sm">
-                <div class="list-group list-group-flush rounded">
-                    <a href="orders.html" class="list-group-item list-group-item-action"><i class="fas fa-box me-2 text-primary"></i>My Orders</a>
-                    <a href="wishlist.html" class="list-group-item list-group-item-action"><i class="fas fa-heart me-2 text-danger"></i>Wishlist</a>
-                    <a href="checkout.html" class="list-group-item list-group-item-action"><i class="fas fa-credit-card me-2 text-success"></i>Checkout</a>
-                    <a href="#" class="list-group-item list-group-item-action text-danger" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main -->
-        <div class="col-lg-9">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white border-0 pt-4 pb-0 px-4">
-                    <div class="d-flex gap-0 border-bottom">
-                        <button class="tab-btn active" onclick="switchTab('personal',this)">Personal Info</button>
-                        <button class="tab-btn" onclick="switchTab('security',this)">Security</button>
-                        <button class="tab-btn" onclick="switchTab('address',this)">Address</button>
-                    </div>
-                </div>
-                <div class="card-body p-4">
-
-                    <!-- Personal Info -->
-                    <div class="tab-content-pane active" id="tab-personal">
-                        <h5 class="fw-bold mb-4">Personal Information</h5>
-                        <form onsubmit="saveProfile(event)">
-                            <div class="row g-3">
-                                <div class="col-md-6"><label class="form-label">First Name</label><input type="text" class="form-control" id="editFname"></div>
-                                <div class="col-md-6"><label class="form-label">Last Name</label><input type="text" class="form-control" id="editLname"></div>
-                                <div class="col-12"><label class="form-label">Email</label><input type="email" class="form-control" id="editEmail"></div>
-                                <div class="col-12"><label class="form-label">Phone</label><input type="tel" class="form-control" id="editPhone"></div>
-                                <div class="col-12"><label class="form-label">Gender</label>
-                                    <select class="form-select" id="editGender">
-                                        <option value="">Prefer not to say</option>
-                                        <option value="male">Male</option>
-                                        <option value="female">Female</option>
-                                        <option value="other">Other</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <button type="submit" class="btn mt-4 px-5 fw-bold" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white"><i class="fas fa-save me-2"></i>Save Changes</button>
-                        </form>
-                    </div>
-
-                    <!-- Security -->
-                    <div class="tab-content-pane" id="tab-security">
-                        <h5 class="fw-bold mb-4">Change Password</h5>
-                        <form onsubmit="changePassword(event)">
-                            <div class="mb-3"><label class="form-label">Current Password</label><input type="password" class="form-control" id="currentPwd"></div>
-                            <div class="mb-3"><label class="form-label">New Password</label><input type="password" class="form-control" id="newPwd"></div>
-                            <div class="mb-3"><label class="form-label">Confirm New Password</label><input type="password" class="form-control" id="confirmPwd"></div>
-                            <button type="submit" class="btn mt-2 px-5 fw-bold" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white"><i class="fas fa-lock me-2"></i>Update Password</button>
-                        </form>
-                    </div>
-
-                    <!-- Address -->
-                    <div class="tab-content-pane" id="tab-address">
-                        <h5 class="fw-bold mb-4">Saved Address</h5>
-                        <form onsubmit="saveAddress(event)">
-                            <div class="row g-3">
-                                <div class="col-12"><label class="form-label">Address Line 1</label><input type="text" class="form-control" id="addrLine1" placeholder="House/Flat No., Street"></div>
-                                <div class="col-12"><label class="form-label">Address Line 2</label><input type="text" class="form-control" id="addrLine2" placeholder="Area, Landmark"></div>
-                                <div class="col-md-5"><label class="form-label">City</label><input type="text" class="form-control" id="addrCity"></div>
-                                <div class="col-md-4"><label class="form-label">State</label><input type="text" class="form-control" id="addrState"></div>
-                                <div class="col-md-3"><label class="form-label">PIN Code</label><input type="text" class="form-control" id="addrPin" maxlength="6"></div>
-                            </div>
-                            <button type="submit" class="btn mt-4 px-5 fw-bold" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white"><i class="fas fa-save me-2"></i>Save Address</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="row g-4">
+    <div class="col-lg-3">
+      <div class="sidebar-card mb-4">
+        <div class="avatar-ring" id="avatarEl">U</div>
+        <h5 class="fw-bold mb-1" id="sidebarName">Loading…</h5>
+        <p class="text-muted small mb-3" id="sidebarEmail"></p>
+        <span class="member-badge" id="memberBadge">Member</span>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-6"><div class="stat-box"><div class="num" id="statOrders">0</div><div class="lbl">Orders</div></div></div>
+        <div class="col-6"><div class="stat-box"><div class="num" id="statWish">0</div><div class="lbl">Wishlist</div></div></div>
+      </div>
+      <div class="profile-card p-2">
+        <a href="orders.html"   class="quick-link"><i class="fas fa-box me-2" style="color:var(--primary)"></i>My Orders</a>
+        <a href="wishlist.html" class="quick-link"><i class="fas fa-heart me-2 text-danger"></i>Wishlist</a>
+        <a href="checkout.html" class="quick-link"><i class="fas fa-credit-card me-2" style="color:var(--primary)"></i>Checkout</a>
+        <a href="#" onclick="logout()" class="quick-link text-danger"><i class="fas fa-sign-out-alt me-2"></i>Logout</a>
+      </div>
     </div>
+    <div class="col-lg-9">
+      <div class="profile-card">
+        <div class="p-4 border-bottom">
+          <div class="d-flex gap-0 overflow-auto">
+            <button class="tab-pill active" onclick="switchTab('personal',this)">Personal Info</button>
+            <button class="tab-pill" onclick="switchTab('security',this)">Security</button>
+            <button class="tab-pill" onclick="switchTab('address',this)">Address</button>
+          </div>
+        </div>
+        <div class="p-4">
+          <div class="tab-pane active" id="tab-personal">
+            <h5 class="fw-bold mb-4">Personal Information</h5>
+            <form onsubmit="saveProfile(event)">
+              <div class="row g-3">
+                <div class="col-md-6"><label class="form-label fw-semibold">First Name</label><input type="text" class="form-control" id="pfname"></div>
+                <div class="col-md-6"><label class="form-label fw-semibold">Last Name</label><input type="text" class="form-control" id="plname"></div>
+                <div class="col-12"><label class="form-label fw-semibold">Email</label><input type="email" class="form-control" id="pemail" disabled style="background:var(--bg)"></div>
+                <div class="col-12"><label class="form-label fw-semibold">Phone</label><input type="tel" class="form-control" id="pphone"></div>
+                <div class="col-12"><label class="form-label fw-semibold">Gender</label>
+                  <select class="form-select" id="pgender"><option value="">Prefer not to say</option><option value="male">Male</option><option value="female">Female</option><option value="other">Other</option></select>
+                </div>
+              </div>
+              <button type="submit" class="btn-save mt-4"><i class="fas fa-save me-2"></i>Save Changes</button>
+            </form>
+          </div>
+          <div class="tab-pane" id="tab-security">
+            <h5 class="fw-bold mb-4">Change Password</h5>
+            <form id="pwdForm" onsubmit="changePassword(event)">
+              <div class="mb-3"><label class="form-label fw-semibold">Current Password</label><input type="password" class="form-control" id="curPwd" placeholder="Enter current password"></div>
+              <div class="mb-3"><label class="form-label fw-semibold">New Password</label><input type="password" class="form-control" id="newPwd" placeholder="Min. 6 characters"></div>
+              <div class="mb-3"><label class="form-label fw-semibold">Confirm New Password</label><input type="password" class="form-control" id="conPwd" placeholder="Repeat new password"></div>
+              <button type="submit" class="btn-save mt-2"><i class="fas fa-lock me-2"></i>Update Password</button>
+            </form>
+          </div>
+          <div class="tab-pane" id="tab-address">
+            <h5 class="fw-bold mb-4">Saved Address</h5>
+            <form onsubmit="saveAddress(event)">
+              <div class="row g-3">
+                <div class="col-12"><label class="form-label fw-semibold">Address Line 1</label><input type="text" class="form-control" id="aline1" placeholder="House/Flat No., Street"></div>
+                <div class="col-12"><label class="form-label fw-semibold">Address Line 2</label><input type="text" class="form-control" id="aline2" placeholder="Area, Landmark (optional)"></div>
+                <div class="col-md-5"><label class="form-label fw-semibold">City</label><input type="text" class="form-control" id="acity"></div>
+                <div class="col-md-4"><label class="form-label fw-semibold">State</label><input type="text" class="form-control" id="astate"></div>
+                <div class="col-md-3"><label class="form-label fw-semibold">PIN Code</label><input type="text" class="form-control" id="apin" maxlength="6"></div>
+              </div>
+              <button type="submit" class="btn-save mt-4"><i class="fas fa-save me-2"></i>Save Address</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
-<!-- Cart Offcanvas -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title"><i class="fas fa-shopping-cart me-2"></i>Shopping Cart</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body d-flex flex-column">
-        <div id="cartItems" class="flex-grow-1"></div>
-        <div class="border-top pt-3 mt-auto">
-            <div class="d-flex justify-content-between fw-bold fs-5 mb-3"><span>Total</span><span class="text-primary">₹<span id="cartTotal">0</span></span></div>
-            <a href="checkout.html" class="btn btn-success w-100 fw-bold">Checkout</a>
-        </div>
-    </div>
+  <div class="offcanvas-header"><h5 class="offcanvas-title text-white"><i class="fas fa-shopping-cart me-2"></i>Cart</h5><button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button></div>
+  <div class="offcanvas-body d-flex flex-column"><div id="cartItems" class="flex-grow-1"></div><div class="border-top pt-3 mt-auto"><div class="d-flex justify-content-between fw-bold fs-5 mb-3"><span>Total</span><span style="color:var(--primary)">₹<span id="cartTotal">0</span></span></div><a href="checkout.html" class="btn w-100 fw-bold mb-2 text-white" style="background:var(--dark)">Checkout</a><button class="btn btn-outline-secondary w-100" onclick="clearCart()">Clear Cart</button></div></div>
 </div>
-
-<footer class="bg-dark text-white py-4 mt-5">
-    <div class="container text-center text-white-50"><p class="mb-0">&copy; 2024 FashionCart. All rights reserved.</p></div>
-</footer>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="app.js"></script>
+<script src="api.js"></script>
 <script>
-    if (!isLoggedIn()) { window.location.href = 'login.html'; }
+  if (!isLoggedIn()) location.href = 'login.html';
 
-    function switchTab(tab, btn) {
-        document.querySelectorAll('.tab-content-pane').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.getElementById('tab-' + tab).classList.add('active');
-        btn.classList.add('active');
+  function switchTab(name, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-pill').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + name).classList.add('active');
+    btn.classList.add('active');
+  }
+
+  function loadProfile() {
+    const u = getCurrentUser();
+    document.getElementById('sidebarName').textContent = (u.firstName || '') + ' ' + (u.lastName || '');
+    document.getElementById('sidebarEmail').textContent = u.email || '';
+    document.getElementById('avatarEl').textContent = (u.firstName || 'U')[0].toUpperCase();
+    if (u.createdAt) document.getElementById('memberBadge').textContent = 'Since ' + new Date(u.createdAt).toLocaleDateString('en-IN',{month:'short',year:'numeric'});
+    document.getElementById('pfname').value  = u.firstName || '';
+    document.getElementById('plname').value  = u.lastName  || '';
+    document.getElementById('pemail').value  = u.email     || '';
+    document.getElementById('pphone').value  = u.phone     || '';
+    if (u.gender) document.getElementById('pgender').value = u.gender;
+    if (u.address) {
+      document.getElementById('aline1').value = u.address.line1 || '';
+      document.getElementById('aline2').value = u.address.line2 || '';
+      document.getElementById('acity').value  = u.address.city  || '';
+      document.getElementById('astate').value = u.address.state || '';
+      document.getElementById('apin').value   = u.address.pin   || '';
     }
+    document.getElementById('statOrders').textContent = getOrders().length;
+    _loadWishlist(); document.getElementById('statWish').textContent = _wishlistIds.length;
+  }
 
-    function loadProfile() {
-        const u = getCurrentUser();
-        const name = `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'User';
-        document.getElementById('profileName').textContent = name;
-        document.getElementById('profileEmail').textContent = u.email || '';
-        document.getElementById('avatarEl').textContent = (u.firstName || 'U')[0].toUpperCase();
-        document.getElementById('memberSince').textContent = u.registrationDate ? 'Since ' + u.registrationDate.split(',')[0] : 'Member';
+  async function saveProfile(e) {
+    e.preventDefault();
+    try {
+      await api('PUT','/auth/profile',{firstName:document.getElementById('pfname').value.trim(),lastName:document.getElementById('plname').value.trim(),phone:document.getElementById('pphone').value.trim(),gender:document.getElementById('pgender').value});
+      showToast('Profile updated!','success'); loadProfile();
+    } catch(err) { showToast(err.message,'danger'); }
+  }
 
-        document.getElementById('editFname').value = u.firstName || '';
-        document.getElementById('editLname').value = u.lastName || '';
-        document.getElementById('editEmail').value = u.email || '';
-        document.getElementById('editPhone').value = u.phone || '';
-        if (u.gender) document.getElementById('editGender').value = u.gender;
+  async function changePassword(e) {
+    e.preventDefault();
+    const cur=document.getElementById('curPwd').value, newP=document.getElementById('newPwd').value, con=document.getElementById('conPwd').value;
+    if (newP !== con) { showToast('Passwords do not match','danger'); return; }
+    if (newP.length < 6) { showToast('Password must be at least 6 characters','danger'); return; }
+    try {
+      await api('PUT','/auth/password',{currentPassword:cur,newPassword:newP});
+      document.getElementById('pwdForm').reset();
+      showToast('Password changed!','success');
+    } catch(err) { showToast(err.message,'danger'); }
+  }
 
-        if (u.address) {
-            document.getElementById('addrLine1').value = u.address.line1 || '';
-            document.getElementById('addrLine2').value = u.address.line2 || '';
-            document.getElementById('addrCity').value = u.address.city || '';
-            document.getElementById('addrState').value = u.address.state || '';
-            document.getElementById('addrPin').value = u.address.pin || '';
-        }
+  async function saveAddress(e) {
+    e.preventDefault();
+    try {
+      await api('PUT','/auth/address',{line1:document.getElementById('aline1').value.trim(),line2:document.getElementById('aline2').value.trim(),city:document.getElementById('acity').value.trim(),state:document.getElementById('astate').value.trim(),pin:document.getElementById('apin').value.trim()});
+      showToast('Address saved!','success');
+    } catch(err) { showToast(err.message,'danger'); }
+  }
 
-        document.getElementById('orderCount').textContent = (JSON.parse(localStorage.getItem('orders') || '[]')).length;
-        document.getElementById('wishCount').textContent = getWishlist().length;
-    }
-
-    function saveProfile(e) {
-        e.preventDefault();
-        const u = getCurrentUser();
-        u.firstName = document.getElementById('editFname').value.trim();
-        u.lastName  = document.getElementById('editLname').value.trim();
-        u.email     = document.getElementById('editEmail').value.trim();
-        u.phone     = document.getElementById('editPhone').value.trim();
-        u.gender    = document.getElementById('editGender').value;
-        localStorage.setItem('currentUser', JSON.stringify(u));
-        // Update in users list too
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        const idx = users.findIndex(x => x.email === u.email);
-        if (idx > -1) { users[idx] = { ...users[idx], ...u }; localStorage.setItem('users', JSON.stringify(users)); }
-        loadProfile();
-        showToast('Profile saved!', 'success');
-    }
-
-    function changePassword(e) {
-        e.preventDefault();
-        const current  = document.getElementById('currentPwd').value;
-        const newPwd   = document.getElementById('newPwd').value;
-        const confirm  = document.getElementById('confirmPwd').value;
-        const u = getCurrentUser();
-        if (u.password !== current) { showToast('Current password is incorrect', 'danger'); return; }
-        if (newPwd !== confirm)      { showToast('Passwords do not match', 'danger'); return; }
-        if (newPwd.length < 6)       { showToast('Password must be at least 6 characters', 'danger'); return; }
-        u.password = newPwd;
-        localStorage.setItem('currentUser', JSON.stringify(u));
-        const users = JSON.parse(localStorage.getItem('users') || '[]');
-        const idx = users.findIndex(x => x.email === u.email);
-        if (idx > -1) { users[idx].password = newPwd; localStorage.setItem('users', JSON.stringify(users)); }
-        e.target.reset();
-        showToast('Password updated!', 'success');
-    }
-
-    function saveAddress(e) {
-        e.preventDefault();
-        const u = getCurrentUser();
-        u.address = {
-            line1: document.getElementById('addrLine1').value,
-            line2: document.getElementById('addrLine2').value,
-            city:  document.getElementById('addrCity').value,
-            state: document.getElementById('addrState').value,
-            pin:   document.getElementById('addrPin').value
-        };
-        localStorage.setItem('currentUser', JSON.stringify(u));
-        showToast('Address saved!', 'success');
-    }
-
-    loadProfile();
+  loadProfile();
 </script>
 </body>
 </html>

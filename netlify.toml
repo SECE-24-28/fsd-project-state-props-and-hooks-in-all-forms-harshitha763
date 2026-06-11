@@ -3,5 +3,5 @@
 
 [[redirects]]
   from = "/*"
-  to = "/login.html"
+  to = "/page.html"
   status = 200

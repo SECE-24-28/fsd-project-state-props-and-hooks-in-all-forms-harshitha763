@@ -1,16 +1,13 @@
 require('dotenv').config();
 const express = require('express');
 const cors    = require('cors');
-const path    = require('path');
 const { connectDB, seedProducts } = require('./database');
 
 const app = express();
 
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-app.use(express.static(path.join(__dirname, '../frontend')));
 
 const { router: authRouter } = require('./routes/auth');
 app.use('/api/auth',     authRouter);
@@ -22,24 +19,23 @@ app.use('/api/contact',  require('./routes/contact'));
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok', time: new Date().toISOString() }));
 
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/login.html'));
-});
+app.get('/', (req, res) => res.json({
+  message: '🚀 FashionCart API is live!',
+  endpoints: ['/api/health', '/api/products', '/api/auth/login']
+}));
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Internal server error' });
-});
+app.use((req, res) => res.status(404).json({ error: 'Route not found' }));
+app.use((err, req, res, next) => { console.error(err.stack); res.status(500).json({ error: 'Internal server error' }); });
 
 const PORT = process.env.PORT || 3000;
 
 connectDB().then(seedProducts).then(() => {
   app.listen(PORT, () => {
-    console.log(`\n🚀 FashionCart server running at http://localhost:${PORT}`);
-    console.log(`   Frontend  → http://localhost:${PORT}/login.html`);
-    console.log(`   API docs  → http://localhost:${PORT}/api/health\n`);
+    console.log(`\n🚀 FashionCart API running on port ${PORT}`);
   });
 }).catch(err => {
-  console.error('Failed to initialize database:', err);
+  console.error('❌ DB connection failed:', err.message);
   process.exit(1);
 });
+
+module.exports = app;

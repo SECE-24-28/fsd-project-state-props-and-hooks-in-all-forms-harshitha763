@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual Try-On — FashionCart</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Poppins',sans-serif;background:#0d1a12;color:white;min-height:100vh}
+
+    /* NAV */
+    .nav{background:rgba(13,26,18,.95);backdrop-filter:blur(20px);padding:14px 40px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(129,154,145,.15);position:sticky;top:0;z-index:100}
+    .brand{font-size:1.4rem;font-weight:900;background:linear-gradient(135deg,#819A91,#A7C1A8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none}
+    .back-btn{color:rgba(255,255,255,.7);text-decoration:none;font-size:.88rem;display:flex;align-items:center;gap:8px;padding:8px 18px;border-radius:50px;border:1px solid rgba(255,255,255,.15);transition:.3s}
+    .back-btn:hover{color:white;border-color:rgba(129,154,145,.5);background:rgba(129,154,145,.1)}
+
+    /* HERO */
+    .hero{text-align:center;padding:50px 20px 40px;background:linear-gradient(180deg,rgba(129,154,145,.08) 0%,transparent 100%)}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(129,154,145,.15);border:1px solid rgba(167,193,168,.3);color:#A7C1A8;padding:6px 18px;border-radius:50px;font-size:.78rem;font-weight:700;letter-spacing:1px;margin-bottom:16px}
+    .hero h1{font-size:2.6rem;font-weight:900;margin-bottom:10px}
+    .hero h1 span{background:linear-gradient(135deg,#819A91,#A7C1A8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+    .hero p{color:rgba(255,255,255,.6);font-size:1rem;max-width:500px;margin:0 auto}
+
+    /* MAIN LAYOUT */
+    .main{display:grid;grid-template-columns:1fr 320px;gap:20px;padding:20px 40px 40px;max-width:1200px;margin:0 auto}
+
+    /* STAGE */
+    .stage-wrap{display:flex;flex-direction:column;gap:16px}
+    .stage{position:relative;background:#111a14;border-radius:24px;overflow:hidden;border:1px solid rgba(129,154,145,.2);aspect-ratio:4/5;max-height:580px;display:flex;align-items:center;justify-content:center}
+    .stage-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+    .stage-video.on{display:block}
+    .stage-bg-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none}
+    .stage-bg-img.on{display:block}
+
+    /* Garment overlay */
+    .garment-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:5}
+    .garment-ov img{max-height:78%;max-width:88%;object-fit:contain;opacity:.88;transition:opacity .3s;filter:drop-shadow(0 8px 32px rgba(0,0,0,.6))}
+
+    /* Placeholder */
+    .stage-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:40px;text-align:center;z-index:1}
+    .placeholder-ring{width:100px;height:100px;border-radius:50%;border:3px dashed rgba(129,154,145,.4);display:flex;align-items:center;justify-content:center;animation:spin 8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .placeholder-ring i{font-size:2.5rem;color:rgba(129,154,145,.6)}
+
+    /* Controls */
+    .stage-controls{display:flex;gap:10px;flex-wrap:wrap}
+    .ctrl-btn{flex:1;min-width:120px;padding:11px 16px;border-radius:14px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);color:white;font-family:'Poppins',sans-serif;font-size:.84rem;font-weight:600;cursor:pointer;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px}
+    .ctrl-btn:hover{background:rgba(129,154,145,.2);border-color:rgba(129,154,145,.4)}
+    .ctrl-btn.primary{background:linear-gradient(135deg,#819A91,#A7C1A8);border:none;box-shadow:0 4px 16px rgba(129,154,145,.35)}
+    .ctrl-btn.primary:hover{opacity:.9;transform:translateY(-2px);box-shadow:0 8px 24px rgba(129,154,145,.45)}
+    .ctrl-btn.danger{background:rgba(139,58,58,.3);border-color:rgba(139,58,58,.5)}
+    .ctrl-btn.danger:hover{background:rgba(139,58,58,.5)}
+
+    /* Opacity slider */
+    .slider-row{display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.08)}
+    .slider-row label{font-size:.8rem;color:rgba(255,255,255,.55);white-space:nowrap;min-width:80px}
+    .slider-row input[type=range]{flex:1;accent-color:#819A91;height:4px}
+    .slider-row .val{font-size:.8rem;font-weight:700;color:#A7C1A8;min-width:36px;text-align:right}
+
+    /* PANEL */
+    .panel{display:flex;flex-direction:column;gap:16px;max-height:calc(100vh - 200px);overflow-y:auto;padding-right:4px}
+    .panel::-webkit-scrollbar{width:4px}
+    .panel::-webkit-scrollbar-thumb{background:rgba(129,154,145,.3);border-radius:2px}
+
+    .panel-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px}
+    .panel-label{font-size:.72rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:12px}
+
+    /* Selected info */
+    .sel-info{background:rgba(129,154,145,.12);border:1px solid rgba(129,154,145,.25);border-radius:14px;padding:14px;display:none}
+    .sel-info.show{display:block}
+    .sel-name{font-weight:700;color:white;font-size:.93rem}
+    .sel-price{font-weight:800;color:#A7C1A8;font-size:1rem;margin:4px 0}
+    .sel-mat{font-size:.75rem;color:rgba(255,255,255,.4);background:rgba(255,255,255,.07);padding:3px 10px;border-radius:50px;display:inline-block}
+
+    /* Color swatches */
+    .swatches{display:flex;flex-wrap:wrap;gap:8px}
+    .swatch{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .3s;position:relative}
+    .swatch::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid transparent;transition:.3s}
+    .swatch.active::after{border-color:#A7C1A8}
+    .swatch:hover{transform:scale(1.15)}
+
+    /* Category tabs */
+    .cat-tabs{display:flex;gap:6px;flex-wrap:wrap}
+    .cat-tab{padding:6px 14px;border-radius:50px;border:1px solid rgba(255,255,255,.12);background:transparent;color:rgba(255,255,255,.6);font-family:'Poppins',sans-serif;font-size:.78rem;font-weight:600;cursor:pointer;transition:.3s}
+    .cat-tab:hover{border-color:rgba(129,154,145,.4);color:#A7C1A8}
+    .cat-tab.active{background:linear-gradient(135deg,#819A91,#A7C1A8);border-color:transparent;color:white}
+
+    /* Product grid */
+    .prod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+    .prod-thumb{border-radius:12px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .3s;position:relative;aspect-ratio:1;background:#111}
+    .prod-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .4s}
+    .prod-thumb:hover img{transform:scale(1.08)}
+    .prod-thumb:hover{border-color:rgba(129,154,145,.5)}
+    .prod-thumb.active{border-color:#A7C1A8;box-shadow:0 0 0 3px rgba(167,193,168,.2)}
+    .prod-thumb .thumb-lbl{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(0,0,0,.85),transparent);color:white;font-size:.65rem;font-weight:600;padding:8px 6px 6px;line-height:1.2}
+
+    /* Stats */
+    .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+    .stat-box{text-align:center;padding:12px 8px;background:rgba(255,255,255,.04);border-radius:12px;border:1px solid rgba(255,255,255,.07)}
+    .stat-box .n{font-size:1.2rem;font-weight:900;color:white;display:block}
+    .stat-box .l{font-size:.65rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.5px}
+
+    /* AR overlay grid effect */
+    .ar-grid{position:absolute;inset:0;pointer-events:none;z-index:3;opacity:0;transition:opacity .5s}
+    .ar-grid.show{opacity:1}
+    .ar-grid-inner{width:100%;height:100%;background-image:linear-gradient(rgba(129,154,145,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(129,154,145,.08) 1px,transparent 1px);background-size:40px 40px}
+
+    /* Scanning animation */
+    .scan-line{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(167,193,168,.8),transparent);animation:scan 2s ease-in-out infinite;display:none;z-index:6}
+    .scan-line.show{display:block}
+    @keyframes scan{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+
+    /* AR corner brackets */
+    .ar-corner{position:absolute;width:32px;height:32px;z-index:4;display:none}
+    .ar-corner.show{display:block}
+    .ar-corner.tl{top:16px;left:16px;border-top:3px solid #A7C1A8;border-left:3px solid #A7C1A8;border-radius:4px 0 0 0}
+    .ar-corner.tr{top:16px;right:16px;border-top:3px solid #A7C1A8;border-right:3px solid #A7C1A8;border-radius:0 4px 0 0}
+    .ar-corner.bl{bottom:16px;left:16px;border-bottom:3px solid #A7C1A8;border-left:3px solid #A7C1A8;border-radius:0 0 0 4px}
+    .ar-corner.br{bottom:16px;right:16px;border-bottom:3px solid #A7C1A8;border-right:3px solid #A7C1A8;border-radius:0 0 4px 0}
+
+    /* Badge overlay */
+    .ar-label{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:rgba(13,26,18,.8);backdrop-filter:blur(8px);border:1px solid rgba(129,154,145,.3);color:#A7C1A8;padding:5px 16px;border-radius:50px;font-size:.72rem;font-weight:700;z-index:7;display:none}
+    .ar-label.show{display:block}
+
+    @media(max-width:900px){.main{grid-template-columns:1fr;padding:16px}.panel{max-height:none}.stage{aspect-ratio:3/4;max-height:480px}}
+    @media(max-width:576px){.hero h1{font-size:1.8rem}.nav{padding:12px 20px}}
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <a class="brand" href="index.html"><i class="fas fa-leaf me-2"></i>FashionCart</a>
+  <a class="back-btn" href="index.html"><i class="fas fa-arrow-left"></i>Back to Shop</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-badge"><i class="fas fa-wand-magic-sparkles"></i>Augmented Reality · No App Needed</div>
+  <h1>Virtual <span>Try-On Studio</span></h1>
+  <p>See exactly how clothes look on you — before you buy. Upload a photo or use live camera.</p>
+</div>
+
+<div class="main">
+
+  <!-- Left: Camera Stage -->
+  <div class="stage-wrap">
+    <div class="stage" id="stage">
+      <!-- Video stream -->
+      <video class="stage-video" id="camVideo" autoplay playsinline muted></video>
+      <!-- Uploaded photo -->
+      <img class="stage-bg-img" id="bgPhoto" src="" alt="">
+      <!-- AR grid -->
+      <div class="ar-grid" id="arGrid"><div class="ar-grid-inner"></div></div>
+      <!-- AR corners -->
+      <div class="ar-corner tl" id="arTL"></div><div class="ar-corner tr" id="arTR"></div>
+      <div class="ar-corner bl" id="arBL"></div><div class="ar-corner br" id="arBR"></div>
+      <!-- Scan line -->
+      <div class="scan-line" id="scanLine"></div>
+      <!-- AR label -->
+      <div class="ar-label" id="arLabel"><i class="fas fa-circle-dot me-1"></i>AR LIVE</div>
+      <!-- Garment overlay -->
+      <div class="garment-ov" id="garmentOv"><img id="garmentImg" src="" alt="" style="display:none"></div>
+      <!-- Placeholder -->
+      <div class="stage-placeholder" id="placeholder">
+        <div class="placeholder-ring"><i class="fas fa-tshirt"></i></div>
+        <h5 style="color:rgba(255,255,255,.8);font-weight:700">Start Your Try-On</h5>
+        <p style="color:rgba(255,255,255,.45);font-size:.85rem;max-width:260px">Enable your camera or upload a photo, then select any garment from the right panel</p>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <button class="ctrl-btn primary" onclick="startCam()" style="padding:10px 20px"><i class="fas fa-video"></i>Enable Camera</button>
+          <button class="ctrl-btn" onclick="document.getElementById('fileIn').click()" style="padding:10px 20px"><i class="fas fa-image"></i>Upload Photo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Opacity slider (shown after garment selected) -->
+    <div class="slider-row" id="opacityRow" style="display:none">
+      <label><i class="fas fa-layer-group me-2" style="color:#819A91"></i>Overlay</label>
+      <input type="range" min="30" max="100" value="88" oninput="document.getElementById('garmentImg').style.opacity=this.value/100;document.getElementById('opVal').textContent=this.value+'%'">
+      <span class="val" id="opVal">88%</span>
+    </div>
+
+    <!-- Controls -->
+    <div class="stage-controls" id="stageControls" style="display:none">
+      <button class="ctrl-btn" id="camToggleBtn" onclick="startCam()"><i class="fas fa-video"></i>Camera</button>
+      <button class="ctrl-btn" onclick="document.getElementById('fileIn').click()"><i class="fas fa-image"></i>Upload</button>
+      <button class="ctrl-btn" onclick="takeSnap()"><i class="fas fa-camera"></i>Snapshot</button>
+      <button class="ctrl-btn primary" onclick="addSelToCart()"><i class="fas fa-cart-plus"></i>Add to Cart</button>
+    </div>
+    <input type="file" id="fileIn" accept="image/*" style="display:none" onchange="loadPhoto(event)">
+    <canvas id="snapCanvas" style="display:none"></canvas>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-box"><span class="n">3M+</span><span class="l">Try-Ons</span></div>
+      <div class="stat-box"><span class="n" style="color:#A7C1A8">78%</span><span class="l">Fewer Returns</span></div>
+      <div class="stat-box"><span class="n">4.9★</span><span class="l">Rating</span></div>
+    </div>
+  </div>
+
+  <!-- Right: Control Panel -->
+  <div class="panel">
+
+    <!-- Selected product info -->
+    <div class="sel-info" id="selInfo">
+      <div class="sel-name" id="selName">—</div>
+      <div class="sel-price" id="selPrice">—</div>
+      <span class="sel-mat" id="selMat">—</span>
+    </div>
+
+    <!-- Color options -->
+    <div class="panel-card" id="colorCard" style="display:none">
+      <div class="panel-label"><i class="fas fa-palette me-2"></i>Color Options</div>
+      <div class="swatches" id="swatchWrap"></div>
+    </div>
+
+    <!-- Category filter -->
+    <div class="panel-card">
+      <div class="panel-label"><i class="fas fa-filter me-2"></i>Category</div>
+      <div class="cat-tabs">
+        <button class="cat-tab active" onclick="setCat('all',this)">All</button>
+        <button class="cat-tab" onclick="setCat('women',this)">Women</button>
+        <button class="cat-tab" onclick="setCat('men',this)">Men</button>
+        <button class="cat-tab" onclick="setCat('ethnic',this)">Ethnic</button>
+        <button class="cat-tab" onclick="setCat('unisex',this)">Unisex</button>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <div class="panel-card">
+      <div class="panel-label"><i class="fas fa-tshirt me-2"></i>Select Garment</div>
+      <div class="prod-grid" id="prodGrid"></div>
+    </div>
+
+    <!-- Links -->
+    <div class="panel-card">
+      <div class="panel-label"><i class="fas fa-star me-2"></i>More Features</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="size-advisor.html" style="text-decoration:none"><button class="ctrl-btn" style="width:100%"><i class="fas fa-robot"></i>AI Size Advisor</button></a>
+        <a href="shop-the-look.html" style="text-decoration:none"><button class="ctrl-btn" style="width:100%"><i class="fas fa-images"></i>Shop The Look</button></a>
+        <a href="index.html" style="text-decoration:none"><button class="ctrl-btn primary" style="width:100%"><i class="fas fa-shopping-bag"></i>Browse All Products</button></a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="api.js"></script>
+<script>
+  let selProduct = null;
+  let camStream  = null;
+  let curCat     = 'all';
+
+  const SWATCHES = {
+    'Black':'#1a1a1a','White':'#f5f5f5','Navy':'#0a1a3e','Red':'#b71c1c',
+    'Olive':'#556b2f','Beige':'#c8a97e','Pink':'#e91e8c','Blue':'#1565c0',
+    'Green':'#2e7d32','Brown':'#5d4037','Khaki':'#a08840','Grey':'#757575',
+    'Gold':'#c8a400','Cream':'#f0e8d0','Maroon':'#880e4f','Teal':'#00695c',
+    'Sage':'#819A91','Mint':'#A7C1A8','Multi':'linear-gradient(135deg,#f44336,#2196f3,#4caf50)'
+  };
+
+  function showAR(on) {
+    ['arGrid','arTL','arTR','arBL','arBR','scanLine','arLabel'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) on ? el.classList.add('show') : el.classList.remove('show');
+    });
+  }
+
+  function setCat(cat, btn) {
+    curCat = cat;
+    document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProds();
+  }
+
+  function renderProds() {
+    const list = curCat === 'all'
+      ? PRODUCTS.filter(p => ['women','men','ethnic','unisex'].includes(p.tag))
+      : PRODUCTS.filter(p => p.tag === curCat);
+    document.getElementById('prodGrid').innerHTML = list.map(p =>
+      '<div class="prod-thumb" id="pt_' + p.id + '" onclick="selectProd(\'' + p.id + '\')">' +
+      '<img src="' + p.image + '" alt="' + p.name + '" loading="lazy">' +
+      '<div class="thumb-lbl">' + p.name + '</div>' +
+      '</div>'
+    ).join('');
+  }
+
+  function selectProd(id) {
+    selProduct = PRODUCTS.find(p => p.id === id);
+    if (!selProduct) return;
+
+    // Highlight thumb
+    document.querySelectorAll('.prod-thumb').forEach(t => t.classList.remove('active'));
+    const thumb = document.getElementById('pt_' + id);
+    if (thumb) { thumb.classList.add('active'); thumb.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+
+    // Show garment overlay
+    const img = document.getElementById('garmentImg');
+    img.src = selProduct.image;
+    img.style.display = 'block';
+    img.style.opacity = '0.88';
+
+    // Hide placeholder if visible
+    document.getElementById('placeholder').style.display = 'none';
+    document.getElementById('opacityRow').style.display = 'flex';
+    document.getElementById('stageControls').style.display = 'flex';
+
+    // Show selected info
+    const si = document.getElementById('selInfo');
+    si.classList.add('show');
+    document.getElementById('selName').textContent  = selProduct.name;
+    document.getElementById('selPrice').textContent = '₹' + selProduct.price.toLocaleString('en-IN');
+    document.getElementById('selMat').textContent   = selProduct.material || selProduct.category;
+
+    // Color swatches
+    if (selProduct.colors && selProduct.colors.length) {
+      document.getElementById('colorCard').style.display = 'block';
+      document.getElementById('swatchWrap').innerHTML = selProduct.colors.map((c,i) => {
+        const bg = SWATCHES[c] || '#888';
+        return '<div class="swatch ' + (i===0?'active':'') + '" title="' + c + '" style="background:' + bg + '" onclick="pickColor(\'' + c + '\',this)"></div>';
+      }).join('');
+    }
+
+    // Trigger brief scan animation
+    const scan = document.getElementById('scanLine');
+    scan.classList.add('show');
+    setTimeout(() => scan.classList.remove('show'), 2000);
+
+    showToast('✨ ' + selProduct.name + ' — tap "Add to Cart" to buy!', 'success');
+  }
+
+  function pickColor(color, el) {
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    showToast('Color switched to ' + color, 'info');
+  }
+
+  async function startCam() {
+    if (camStream) { stopCam(); return; }
+    try {
+      camStream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1280},height:{ideal:960}},audio:false});
+      const vid = document.getElementById('camVideo');
+      vid.srcObject = camStream;
+      vid.classList.add('on');
+      document.getElementById('placeholder').style.display = 'none';
+      document.getElementById('stageControls').style.display = 'flex';
+      document.getElementById('camToggleBtn').innerHTML = '<i class="fas fa-video-slash"></i>Stop Cam';
+      showAR(true);
+      showToast('Camera on! Now select a garment →', 'success');
+    } catch(e) {
+      showToast('Camera blocked. Please allow access or upload a photo.', 'danger');
+    }
+  }
+
+  function stopCam() {
+    if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+    const vid = document.getElementById('camVideo');
+    vid.srcObject = null; vid.classList.remove('on');
+    document.getElementById('camToggleBtn').innerHTML = '<i class="fas fa-video"></i>Camera';
+    showAR(false);
+  }
+
+  function loadPhoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const bg = document.getElementById('bgPhoto');
+      bg.src = ev.target.result;
+      bg.classList.add('on');
+      document.getElementById('placeholder').style.display = 'none';
+      document.getElementById('stageControls').style.display = 'flex';
+      // Brief scan effect
+      document.getElementById('scanLine').classList.add('show');
+      setTimeout(() => document.getElementById('scanLine').classList.remove('show'), 1800);
+      showToast('Photo loaded! Select a garment to try on.', 'success');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function takeSnap() {
+    const stage  = document.getElementById('stage');
+    const canvas = document.getElementById('snapCanvas');
+    canvas.width  = stage.offsetWidth * 2;
+    canvas.height = stage.offsetHeight * 2;
+    canvas.style.display = 'none';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(2,2);
+
+    const vid = document.getElementById('camVideo');
+    const bg  = document.getElementById('bgPhoto');
+    if (vid.srcObject) ctx.drawImage(vid, 0, 0, stage.offsetWidth, stage.offsetHeight);
+    else if (bg.src)   ctx.drawImage(bg,  0, 0, stage.offsetWidth, stage.offsetHeight);
+
+    // Draw garment on top
+    const gImg = document.getElementById('garmentImg');
+    if (gImg.src && gImg.style.display !== 'none') {
+      const gw = stage.offsetWidth * 0.85;
+      const gh = stage.offsetHeight * 0.75;
+      const gx = (stage.offsetWidth - gw) / 2;
+      const gy = stage.offsetHeight * 0.1;
+      ctx.globalAlpha = parseFloat(gImg.style.opacity) || 0.88;
+      ctx.drawImage(gImg, gx, gy, gw, gh);
+      ctx.globalAlpha = 1;
+    }
+
+    const link = document.createElement('a');
+    link.download = 'fashioncart-tryon-' + Date.now() + '.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    showToast('📸 Snapshot saved!', 'success');
+  }
+
+  async function addSelToCart() {
+    if (!selProduct) { showToast('Please select a garment first!', 'warning'); return; }
+    const size  = selProduct.sizes  ? selProduct.sizes[0]  : '';
+    const color = selProduct.colors ? selProduct.colors[0] : '';
+    await addToCart(selProduct.id, 1, size, color);
+  }
+
+  // Show toast (standalone version for this page)
+  function showToast(msg, type) {
+    let c = document.getElementById('_tc');
+    if (!c) { c = document.createElement('div'); c.id = '_tc'; c.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px'; document.body.appendChild(c); }
+    const colors = {success:'linear-gradient(135deg,#819A91,#A7C1A8)', danger:'rgba(139,58,58,.95)', info:'rgba(44,56,48,.95)', warning:'rgba(139,110,58,.95)'};
+    const t = document.createElement('div');
+    t.style.cssText = 'background:' + (colors[type]||colors.info) + ';color:white;padding:12px 20px;border-radius:12px;font-size:.85rem;font-weight:600;font-family:Poppins,sans-serif;box-shadow:0 8px 24px rgba(0,0,0,.3);min-width:240px;animation:fadeUp .3s ease';
+    t.textContent = msg;
+    const st = document.createElement('style');
+    st.textContent = '@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}';
+    document.head.appendChild(st);
+    c.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 3500);
+  }
+
+  // Keyboard shortcuts
+  document.addEventListener('keydown', e => {
+    if (e.key === 'c') startCam();
+    if (e.key === 's') takeSnap();
+  });
+
+  renderProds();
+
+  // If no getUserMedia support, hide camera button
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    document.getElementById('camToggleBtn') && (document.getElementById('camToggleBtn').style.display = 'none');
+    document.querySelectorAll('[onclick="startCam()"]').forEach(b => b.style.display = 'none');
+  }
+</script>
+</body>
+</html>

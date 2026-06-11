@@ -1,267 +1,528 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FashionCart - Online Fashion Store</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FashionCart — Shop the Latest Trends</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
+<!-- Announcement Bar -->
+<div class="announce-bar">
+  🌿 SEASON SALE: Up to 70% OFF on all categories! Free shipping on orders above ₹499 &nbsp;|&nbsp; Use code <strong>FASHION20</strong> for extra 20% off!
+</div>
+
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top px-4">
-    <a class="navbar-brand fw-bold" href="index.html"><i class="fas fa-shopping-bag"></i> FashionCart</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
+<nav class="top-navbar navbar navbar-expand-lg px-3 px-lg-5">
+  <a class="nav-brand me-4" href="index.html"><i class="fas fa-shopping-bag me-2"></i>FashionCart</a>
+  <div class="nav-search input-group me-auto d-none d-md-flex" style="max-width:340px">
+    <input type="text" class="form-control" id="navSearchInput" placeholder="Search dresses, shirts, accessories…">
+    <button onclick="doNavSearch()"><i class="fas fa-search"></i></button>
+  </div>
+  <div class="d-flex align-items-center gap-2 ms-3 flex-wrap">
+    <a href="wishlist.html" class="nav-icon-btn"><i class="fas fa-heart"></i><span class="d-none d-lg-inline ms-1">Wishlist</span></a>
+    <a href="orders.html"   class="nav-icon-btn"><i class="fas fa-box"></i><span class="d-none d-lg-inline ms-1">Orders</span></a>
+    <button class="nav-icon-btn cart-btn" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
+      <i class="fas fa-shopping-cart"></i> Cart
+      <span class="badge bg-dark ms-1" id="cartCount">0</span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <div class="ms-auto d-flex gap-2 align-items-center flex-wrap">
-            <a href="index.html" class="btn btn-outline-light btn-sm">Home</a>
-            <a href="categories.html" class="btn btn-outline-light btn-sm">Categories</a>
-            <a href="about-us.html" class="btn btn-outline-light btn-sm">About</a>
-            <button class="btn btn-warning btn-sm position-relative" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas">
-                <i class="fas fa-shopping-cart"></i> Cart
-                <span class="position-absolute top-0 start-100 translate-middle badge bg-danger" id="cartCount">0</span>
-            </button>
-            <div class="nav-item dropdown">
-                <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                    <i class="fas fa-user-circle"></i> <span id="userDisplay">User</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2"></i>Profile</a></li>
-                    <li><a class="dropdown-item" href="wishlist.html"><i class="fas fa-heart me-2"></i>Wishlist</a></li>
-                    <li><a class="dropdown-item" href="orders.html"><i class="fas fa-box me-2"></i>Orders</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                </ul>
-            </div>
-        </div>
+    <div class="dropdown">
+      <button class="nav-icon-btn dropdown-toggle" data-bs-toggle="dropdown">
+        <i class="fas fa-user-circle"></i> <span id="userDisplay">User</span>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="profile.html"><i class="fas fa-user me-2" style="color:var(--primary)"></i>Profile</a></li>
+        <li><a class="dropdown-item" href="wishlist.html"><i class="fas fa-heart me-2 text-danger"></i>Wishlist</a></li>
+        <li><a class="dropdown-item" href="orders.html"><i class="fas fa-box me-2" style="color:var(--primary)"></i>Orders</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="#" onclick="logout()"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+      </ul>
     </div>
+  </div>
 </nav>
 
-<!-- Hero -->
-<section class="hero text-center">
-    <h1>Trendy Fashion Collection</h1>
-    <p>Discover the latest styles for Men & Women</p>
-    <button class="btn btn-light btn-lg mt-3 fw-bold px-5" onclick="document.getElementById('shopSection').scrollIntoView({behavior:'smooth'})">
-        <i class="fas fa-shopping-bag me-2"></i>Shop Now
-    </button>
-</section>
+<!-- Sub Nav -->
+<div class="sub-nav">
+  <div class="container d-flex gap-4 justify-content-center flex-wrap">
+    <a href="#women"><i class="fas fa-female me-1" style="color:var(--accent)"></i>Women</a>
+    <a href="#men"><i class="fas fa-male me-1" style="color:var(--accent)"></i>Men</a>
+    <a href="#kids"><i class="fas fa-child me-1" style="color:var(--accent)"></i>Kids</a>
+    <a href="#ethnic"><i class="fas fa-star me-1" style="color:var(--accent)"></i>Ethnic</a>
+    <a href="#unisex"><i class="fas fa-tshirt me-1" style="color:var(--accent)"></i>Unisex</a>
+    <a href="#accessories"><i class="fas fa-gem me-1" style="color:var(--accent)"></i>Accessories</a>
+    <a href="#deals"><i class="fas fa-fire me-1" style="color:var(--accent)"></i>Deals</a>
+    <a href="size-advisor.html" style="color:#A7C1A8!important"><i class="fas fa-robot me-1" style="color:var(--accent)"></i>AI Sizing</a>
+    <a href="virtual-tryon.html" style="color:#A7C1A8!important"><i class="fas fa-camera me-1" style="color:var(--accent)"></i>Try-On</a>
+    <a href="shop-the-look.html" style="color:#A7C1A8!important"><i class="fas fa-images me-1" style="color:var(--accent)"></i>Shop The Look</a>
+  </div>
+</div>
 
-<!-- Features -->
-<section class="featured-section py-4">
-    <div class="container">
-        <div class="row text-center">
-            <div class="col-6 col-md-3 mb-3"><i class="fas fa-truck feature-icon"></i><h6 class="fw-bold">Free Delivery</h6><p class="small">Orders over ₹500</p></div>
-            <div class="col-6 col-md-3 mb-3"><i class="fas fa-undo feature-icon"></i><h6 class="fw-bold">Easy Returns</h6><p class="small">30-day policy</p></div>
-            <div class="col-6 col-md-3 mb-3"><i class="fas fa-lock feature-icon"></i><h6 class="fw-bold">Secure Payment</h6><p class="small">100% secure</p></div>
-            <div class="col-6 col-md-3 mb-3"><i class="fas fa-headset feature-icon"></i><h6 class="fw-bold">24/7 Support</h6><p class="small">Always here</p></div>
-        </div>
+<!-- Hero Slider -->
+<div class="hero-slider">
+  <button class="slider-arrow left" onclick="changeSlide(-1)"><i class="fas fa-chevron-left"></i></button>
+  <button class="slider-arrow right" onclick="changeSlide(1)"><i class="fas fa-chevron-right"></i></button>
+  <div class="hero-slide slide-1 active">
+    <div class="hero-content">
+      <div class="hero-badge">🌸 New Season Collection 2024</div>
+      <h1>Women's Fashion<br>Like Never Before</h1>
+      <p>Floral dresses, sarees, gowns & more — at unbeatable prices</p>
+      <div class="hero-btns">
+        <button class="btn-hero-main" onclick="filterAndScroll('women')"><i class="fas fa-shopping-bag me-2"></i>Shop Women</button>
+        <button class="btn-hero-out" onclick="scrollToSection('shopSection')">Explore All</button>
+      </div>
     </div>
-</section>
-
-<!-- Shop Section -->
-<div class="container py-5" id="shopSection">
-    <h2 class="text-center fw-bold mb-4">Our Collection</h2>
-
-    <!-- Search & Filter -->
-    <div class="row g-2 mb-4 align-items-center">
-        <div class="col-md-5">
-            <div class="input-group">
-                <span class="input-group-text"><i class="fas fa-search"></i></span>
-                <input type="text" class="form-control" id="searchInput" placeholder="Search products...">
-            </div>
-        </div>
-        <div class="col-md-5">
-            <div class="d-flex flex-wrap gap-2" id="filterBtns">
-                <button class="btn btn-sm btn-dark filter-btn active" data-filter="all">All</button>
-                <button class="btn btn-sm btn-outline-dark filter-btn" data-filter="men">Men</button>
-                <button class="btn btn-sm btn-outline-dark filter-btn" data-filter="women">Women</button>
-                <button class="btn btn-sm btn-outline-dark filter-btn" data-filter="unisex">Unisex</button>
-                <button class="btn btn-sm btn-outline-dark filter-btn" data-filter="accessories">Accessories</button>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <select class="form-select form-select-sm" id="sortSelect">
-                <option value="default">Sort by</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="name">Name A–Z</option>
-            </select>
-        </div>
+  </div>
+  <div class="hero-slide slide-2">
+    <div class="hero-content">
+      <div class="hero-badge">💼 Premium Men's Wear</div>
+      <h1>Style That<br>Defines You</h1>
+      <p>Shirts, jackets, kurtas & blazers — crafted for the modern man</p>
+      <div class="hero-btns">
+        <button class="btn-hero-main" onclick="filterAndScroll('men')"><i class="fas fa-male me-2"></i>Shop Men</button>
+        <button class="btn-hero-out" onclick="scrollToSection('deals')">View Deals</button>
+      </div>
     </div>
+  </div>
+  <div class="hero-slide slide-3">
+    <div class="hero-content">
+      <div class="hero-badge">🎊 Festive & Ethnic Wear</div>
+      <h1>Celebrate in<br>Style</h1>
+      <p>Sherwanis, lehengas, anarkalis & more for every celebration</p>
+      <div class="hero-btns">
+        <button class="btn-hero-main" onclick="filterAndScroll('ethnic')"><i class="fas fa-star me-2"></i>Shop Ethnic</button>
+        <button class="btn-hero-out" onclick="scrollToSection('kids')">Kids Wear</button>
+      </div>
+    </div>
+  </div>
+  <div class="hero-slide slide-4">
+    <div class="hero-content">
+      <div class="hero-badge">🔥 Mega Sale — Up to 70% OFF</div>
+      <h1>Unbeatable Deals<br>Every Day</h1>
+      <p>Top collections, latest trends, guaranteed quality — at half the price</p>
+      <div class="hero-btns">
+        <button class="btn-hero-main" onclick="scrollToSection('deals')"><i class="fas fa-fire me-2"></i>Grab Deals</button>
+        <button class="btn-hero-out" onclick="filterAndScroll('accessories')">Accessories</button>
+      </div>
+    </div>
+  </div>
+  <div class="slider-dots">
+    <div class="dot active" onclick="goToSlide(0)"></div>
+    <div class="dot" onclick="goToSlide(1)"></div>
+    <div class="dot" onclick="goToSlide(2)"></div>
+    <div class="dot" onclick="goToSlide(3)"></div>
+  </div>
+</div>
 
-    <div class="row g-4" id="productsContainer"></div>
-    <p class="text-center text-muted mt-4 d-none" id="noResults"><i class="fas fa-search fa-2x mb-2"></i><br>No products found.</p>
+<!-- Features Strip -->
+<div class="features-strip">
+  <div class="container">
+    <div class="row">
+      <div class="col-6 col-md-3"><div class="feat-item"><div class="feat-icon"><i class="fas fa-truck"></i></div><h6>Free Delivery</h6><p>On orders above ₹499</p></div></div>
+      <div class="col-6 col-md-3"><div class="feat-item"><div class="feat-icon"><i class="fas fa-undo"></i></div><h6>Easy Returns</h6><p>30-day return policy</p></div></div>
+      <div class="col-6 col-md-3"><div class="feat-item"><div class="feat-icon"><i class="fas fa-lock"></i></div><h6>Secure Payment</h6><p>100% safe & encrypted</p></div></div>
+      <div class="col-6 col-md-3"><div class="feat-item"><div class="feat-icon"><i class="fas fa-headset"></i></div><h6>24/7 Support</h6><p>Always here for you</p></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Category Banners -->
+<div class="container py-5">
+  <div class="sec-head">
+    <h2>Shop by <span>Category</span></h2>
+    <p>Find your perfect style across all categories</p>
+    <div class="sec-line"></div>
+  </div>
+  <div class="cat-grid">
+    <div class="cat-card big" onclick="filterAndScroll('women')">
+      <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1470&auto=format&fit=crop" alt="Women">
+      <div class="cat-overlay"><h4><i class="fas fa-female me-2"></i>Women's Fashion</h4><span>Dresses, Tops, Sarees & More</span><a class="cat-btn">Shop Now →</a></div>
+    </div>
+    <div class="cat-card" onclick="filterAndScroll('men')">
+      <img src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?q=80&w=1471&auto=format&fit=crop" alt="Men">
+      <div class="cat-overlay"><h4><i class="fas fa-male me-2"></i>Men's Fashion</h4><span>Shirts, Jackets, Kurtas & More</span><a class="cat-btn">Shop Now →</a></div>
+    </div>
+    <div class="cat-card" onclick="filterAndScroll('accessories')">
+      <img src="https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?q=80&w=687&auto=format&fit=crop" alt="Accessories">
+      <div class="cat-overlay"><h4><i class="fas fa-gem me-2"></i>Accessories</h4><span>Bags, Watches, Belts & More</span><a class="cat-btn">Shop Now →</a></div>
+    </div>
+    <div class="cat-card" onclick="filterAndScroll('kids')">
+      <img src="https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?q=80&w=687&auto=format&fit=crop" alt="Kids">
+      <div class="cat-overlay"><h4><i class="fas fa-child me-2"></i>Kids Wear</h4><span>Cute & Comfy for Little Ones</span><a class="cat-btn">Shop Now →</a></div>
+    </div>
+    <div class="cat-card" onclick="filterAndScroll('ethnic')">
+      <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=687&auto=format&fit=crop" alt="Ethnic">
+      <div class="cat-overlay"><h4><i class="fas fa-star me-2"></i>Ethnic Wear</h4><span>Sherwanis, Lehengas & More</span><a class="cat-btn">Shop Now →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- All Products -->
+<div style="background:var(--bg);padding:60px 0" id="shopSection">
+  <div class="container">
+    <div class="sec-head">
+      <h2>Our <span>Collection</span></h2>
+      <p>Explore our complete range across all categories</p>
+      <div class="sec-line"></div>
+    </div>
+    <div class="row g-3 mb-4 align-items-center">
+      <div class="col-md-6">
+        <div class="input-group">
+          <span class="input-group-text bg-white border-end-0"><i class="fas fa-search text-muted"></i></span>
+          <input type="text" class="form-control border-start-0" id="searchInput" placeholder="Search products…">
+        </div>
+      </div>
+      <div class="col-md-3 ms-auto">
+        <select class="form-select" id="sortSelect">
+          <option value="default">Sort by</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="name">Name A–Z</option>
+          <option value="discount">Highest Discount</option>
+        </select>
+      </div>
+    </div>
+    <div class="filter-tabs" id="filterBtns">
+      <button class="ftab active" data-filter="all">🛍️ All</button>
+      <button class="ftab" data-filter="women">👗 Women</button>
+      <button class="ftab" data-filter="men">👔 Men</button>
+      <button class="ftab" data-filter="kids">🧒 Kids</button>
+      <button class="ftab" data-filter="ethnic">🎊 Ethnic</button>
+      <button class="ftab" data-filter="unisex">👕 Unisex</button>
+      <button class="ftab" data-filter="accessories">💍 Accessories</button>
+    </div>
+    <div class="prod-grid" id="productsContainer"></div>
+    <p class="text-center text-muted mt-5 d-none" id="noResults"><i class="fas fa-search fa-3x mb-3 d-block" style="color:var(--primary)"></i>No products found.</p>
+  </div>
+</div>
+
+<!-- Women -->
+<div class="container py-5" id="women">
+  <div class="sec-head"><h2>👗 Women's <span>Wear</span></h2><p>Trendy dresses, tops, sarees, kurtis and more</p><div class="sec-line"></div></div>
+  <div class="prod-grid" id="womenGrid"></div>
+</div>
+
+<!-- Men -->
+<div style="background:var(--bg);padding:60px 0" id="men">
+  <div class="container">
+    <div class="sec-head"><h2>👔 Men's <span>Wear</span></h2><p>Shirts, jackets, kurtas, blazers and more</p><div class="sec-line"></div></div>
+    <div class="prod-grid" id="menGrid"></div>
+  </div>
+</div>
+
+<!-- Kids -->
+<div class="container py-5" id="kids">
+  <div class="sec-head"><h2>🧒 Kids' <span>Wear</span></h2><p>Adorable and comfortable clothes for your little ones</p><div class="sec-line"></div></div>
+  <div class="prod-grid" id="kidsGrid"></div>
+</div>
+
+<!-- Ethnic -->
+<div style="background:var(--bg);padding:60px 0" id="ethnic">
+  <div class="container">
+    <div class="sec-head"><h2>🎊 Ethnic <span>Wear</span></h2><p>Sherwanis, lehengas, anarkalis and more</p><div class="sec-line"></div></div>
+    <div class="prod-grid" id="ethnicGrid"></div>
+  </div>
+</div>
+
+<!-- Unisex -->
+<div class="container py-5" id="unisex">
+  <div class="sec-head"><h2>👕 Unisex <span>Wear</span></h2><p>Jeans, jackets, sneakers and more for everyone</p><div class="sec-line"></div></div>
+  <div class="prod-grid" id="unisexGrid"></div>
+</div>
+
+<!-- Accessories -->
+<div style="background:var(--bg);padding:60px 0" id="accessories">
+  <div class="container">
+    <div class="sec-head"><h2>💍 <span>Accessories</span></h2><p>Bags, belts, watches, sunglasses and more</p><div class="sec-line"></div></div>
+    <div class="prod-grid" id="accessoriesGrid"></div>
+  </div>
+</div>
+
+<!-- Trending -->
+<div class="container py-5">
+  <div class="sec-head"><h2>🔥 Trending <span>Now</span></h2><p>What everyone is buying this season</p><div class="sec-line"></div></div>
+  <div class="trending-row">
+    <div class="trend-card" onclick="filterAndScroll('women')">
+      <img src="https://images.unsplash.com/photo-1496747611176-84322e1e57c?q=80&w=687&auto=format&fit=crop" alt="Women">
+      <div class="trend-overlay"><h4>Floral Dresses</h4><p>The must-have look this season</p><a class="trend-btn">Shop Now →</a></div>
+    </div>
+    <div class="trend-card" onclick="filterAndScroll('men')">
+      <img src="https://images.unsplash.com/photo-1551028719-00167b16eac5?q=80&w=687&auto=format&fit=crop" alt="Men">
+      <div class="trend-overlay"><h4>Leather Jackets</h4><p>Bold looks for the modern man</p><a class="trend-btn">Shop Now →</a></div>
+    </div>
+    <div class="trend-card" onclick="filterAndScroll('ethnic')">
+      <img src="https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=687&auto=format&fit=crop" alt="Ethnic">
+      <div class="trend-overlay"><h4>Festive Ethnic</h4><p>Celebrate in traditional glory</p><a class="trend-btn">Shop Now →</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- Deals -->
+<div style="background:var(--bg);padding:60px 0" id="deals">
+  <div class="container">
+    <div class="sec-head"><h2>⚡ Flash <span>Deals</span></h2><p>Limited time offers — grab them before they're gone!</p><div class="sec-line"></div></div>
+    <div class="deal-banner">
+      <div class="row align-items-center">
+        <div class="col-md-4 mb-4 mb-md-0" style="position:relative;z-index:1">
+          <p style="color:rgba(255,255,255,.7);margin-bottom:8px;font-size:.9rem">⏰ Deal ends in:</p>
+          <div class="deal-timer d-flex gap-2">
+            <div class="timer-box"><span class="num" id="timerH">00</span><span class="lbl">Hours</span></div>
+            <div class="timer-box"><span class="num" id="timerM">00</span><span class="lbl">Mins</span></div>
+            <div class="timer-box"><span class="num" id="timerS">00</span><span class="lbl">Secs</span></div>
+          </div>
+          <h3 style="font-weight:900;font-size:1.8rem;margin-top:16px;color:white">Up to <span style="color:var(--accent)">70% OFF</span><br>Today Only!</h3>
+          <button class="btn-hero-main mt-3" onclick="filterAndScroll('all')">View All Deals</button>
+        </div>
+        <div class="col-md-8" style="position:relative;z-index:1">
+          <div class="deal-items" id="dealItems"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- Testimonials -->
-<section class="testimonials-section py-5 bg-light">
-    <div class="container">
-        <h2 class="text-center fw-bold mb-5">What Our Customers Say</h2>
-        <div class="row g-4">
-            <div class="col-md-4"><div class="testimonial-card p-4 bg-white rounded shadow"><div class="stars mb-2"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i></div><p>"Amazing quality and fast delivery! Will shop again."</p><strong>— Sarah K.</strong></div></div>
-            <div class="col-md-4"><div class="testimonial-card p-4 bg-white rounded shadow"><div class="stars mb-2"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i></div><p>"Best fashion store online. Great prices and quality!"</p><strong>— Mike T.</strong></div></div>
-            <div class="col-md-4"><div class="testimonial-card p-4 bg-white rounded shadow"><div class="stars mb-2"><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i><i class="fas fa-star text-warning"></i></div><p>"Love the variety! Customer service is excellent."</p><strong>— Emma R.</strong></div></div>
-        </div>
-    </div>
-</section>
+<div class="container py-5">
+  <div class="sec-head"><h2>💬 Customer <span>Reviews</span></h2><p>What our happy customers are saying</p><div class="sec-line"></div></div>
+  <div class="row g-4">
+    <div class="col-md-4"><div class="testi-card"><div class="d-flex align-items-center gap-3 mb-3"><img class="testi-avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="Priya"><div><strong>Priya S.</strong><br><small class="text-muted">Verified Buyer</small></div></div><div class="testi-stars mb-2"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><p class="text-muted small mb-0">"Amazing quality! The floral dress was exactly as shown. Fast delivery and great packaging. Will definitely shop again! 💕"</p></div></div>
+    <div class="col-md-4"><div class="testi-card"><div class="d-flex align-items-center gap-3 mb-3"><img class="testi-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rahul"><div><strong>Rahul M.</strong><br><small class="text-muted">Verified Buyer</small></div></div><div class="testi-stars mb-2"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div><p class="text-muted small mb-0">"Best fashion store online. Bought the leather jacket and it's absolutely stunning! Premium material and fits perfectly."</p></div></div>
+    <div class="col-md-4"><div class="testi-card"><div class="d-flex align-items-center gap-3 mb-3"><img class="testi-avatar" src="https://randomuser.me/api/portraits/women/68.jpg" alt="Ananya"><div><strong>Ananya R.</strong><br><small class="text-muted">Verified Buyer</small></div></div><div class="testi-stars mb-2"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div><p class="text-muted small mb-0">"Ordered the anarkali suit for a wedding. Got so many compliments! The colors are vibrant and the stitching is superb."</p></div></div>
+  </div>
+</div>
 
 <!-- Newsletter -->
-<section class="newsletter-section py-5 bg-dark text-white text-center">
-    <div class="container">
-        <h2 class="mb-3">Subscribe to Our Newsletter</h2>
-        <p class="mb-4 text-white-50">Get exclusive deals and updates directly to your inbox</p>
-        <div class="input-group mx-auto" style="max-width:480px">
-            <input type="email" class="form-control" id="newsletterEmail" placeholder="Enter your email">
-            <button class="btn btn-warning fw-bold" onclick="subscribeNewsletter()">Subscribe</button>
-        </div>
+<div class="newsletter">
+  <div class="container">
+    <h2>🎁 Get Exclusive Deals!</h2>
+    <p>Subscribe to our newsletter and get 20% off your first order</p>
+    <div class="nl-form">
+      <input type="email" id="newsletterEmail" placeholder="Enter your email address…">
+      <button onclick="subscribeNL()">Subscribe</button>
     </div>
-</section>
+  </div>
+</div>
 
 <!-- Footer -->
-<footer class="bg-dark text-white py-5">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-3 mb-4"><h5>FashionCart</h5><p class="text-white-50">Your ultimate online fashion destination.</p></div>
-            <div class="col-md-3 mb-4"><h6>Quick Links</h6><ul class="list-unstyled"><li><a href="index.html" class="text-white-50 text-decoration-none">Home</a></li><li><a href="categories.html" class="text-white-50 text-decoration-none">Categories</a></li><li><a href="about-us.html" class="text-white-50 text-decoration-none">About Us</a></li></ul></div>
-            <div class="col-md-3 mb-4"><h6>Policies</h6><ul class="list-unstyled"><li><a href="contact-us.html" class="text-white-50 text-decoration-none">Contact Us</a></li><li><a href="privacy-policy.html" class="text-white-50 text-decoration-none">Privacy Policy</a></li><li><a href="terms-conditions.html" class="text-white-50 text-decoration-none">Terms</a></li></ul></div>
-            <div class="col-md-3 mb-4"><h6>Support</h6><ul class="list-unstyled"><li><a href="faq.html" class="text-white-50 text-decoration-none">FAQ</a></li><li><a href="orders.html" class="text-white-50 text-decoration-none">Track Order</a></li><li><a href="contact-us.html" class="text-white-50 text-decoration-none">Returns</a></li></ul></div>
+<footer class="site-footer">
+  <div class="container">
+    <div class="row g-4">
+      <div class="col-md-3 mb-3">
+        <div class="brand mb-2"><i class="fas fa-shopping-bag me-2"></i>FashionCart</div>
+        <p style="font-size:.875rem;color:rgba(255,255,255,.45);line-height:1.7">Your ultimate online fashion destination. Trendy clothes for every occasion at unbeatable prices.</p>
+        <div class="mt-3">
+          <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
         </div>
-        <div class="text-center mt-3">
-            <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-lg"></i></a>
-            <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-lg"></i></a>
-            <a href="#" class="text-white me-3"><i class="fab fa-instagram fa-lg"></i></a>
-        </div>
-        <hr class="border-secondary mt-3">
-        <p class="text-center text-white-50 mb-0">&copy; 2024 FashionCart. All rights reserved.</p>
+      </div>
+      <div class="col-6 col-md-2"><h6>Categories</h6><a href="#women">Women</a><a href="#men">Men</a><a href="#kids">Kids</a><a href="#ethnic">Ethnic</a><a href="#accessories">Accessories</a></div>
+      <div class="col-6 col-md-2"><h6>Quick Links</h6><a href="index.html">Home</a><a href="categories.html">Categories</a><a href="about-us.html">About Us</a><a href="contact-us.html">Contact</a></div>
+      <div class="col-6 col-md-2"><h6>Support</h6><a href="faq.html">FAQ</a><a href="orders.html">Track Order</a><a href="privacy-policy.html">Privacy Policy</a><a href="terms-conditions.html">Terms</a></div>
+      <div class="col-6 col-md-3"><h6>Contact Us</h6>
+        <p style="font-size:.875rem;color:rgba(255,255,255,.45)"><i class="fas fa-envelope me-2" style="color:var(--accent)"></i>support@fashioncart.in</p>
+        <p style="font-size:.875rem;color:rgba(255,255,255,.45)"><i class="fas fa-phone me-2" style="color:var(--accent)"></i>+91 98765 43210</p>
+        <p style="font-size:.875rem;color:rgba(255,255,255,.45)"><i class="fas fa-map-marker-alt me-2" style="color:var(--accent)"></i>Mumbai, Maharashtra, India</p>
+      </div>
     </div>
+  </div>
+  <div class="footer-bottom"><div class="container">© 2024 FashionCart. All rights reserved. Made with ❤️ in India</div></div>
 </footer>
 
 <!-- Cart Offcanvas -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title"><i class="fas fa-shopping-cart me-2"></i>Shopping Cart</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title text-white"><i class="fas fa-shopping-cart me-2"></i>Shopping Cart</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+    <div id="cartItems" class="flex-grow-1"></div>
+    <div class="border-top pt-3 mt-auto">
+      <div class="d-flex justify-content-between fw-bold fs-5 mb-3"><span>Total</span><span style="color:var(--primary)">₹<span id="cartTotal">0</span></span></div>
+      <a href="checkout.html" class="btn w-100 fw-bold mb-2 text-white" style="background:var(--dark)">Proceed to Checkout</a>
+      <button class="btn btn-outline-secondary w-100" onclick="clearCart()"><i class="fas fa-trash me-2"></i>Clear Cart</button>
     </div>
-    <div class="offcanvas-body d-flex flex-column">
-        <div id="cartItems" class="flex-grow-1"></div>
-        <div class="border-top pt-3 mt-auto">
-            <div class="d-flex justify-content-between fw-bold fs-5 mb-3">
-                <span>Total</span><span class="text-primary">₹<span id="cartTotal">0</span></span>
-            </div>
-            <a href="checkout.html" class="btn btn-success w-100 fw-bold"><i class="fas fa-credit-card me-2"></i>Proceed to Checkout</a>
-            <button class="btn btn-outline-danger w-100 mt-2" onclick="clearCart()"><i class="fas fa-trash me-2"></i>Clear Cart</button>
-        </div>
-    </div>
+  </div>
 </div>
 
 <!-- Product Modal -->
 <div class="modal fade" id="productModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content border-0 rounded-4">
-            <div class="modal-header border-0" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white">
-                <h5 class="modal-title" id="modalProductName"></h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content border-0 rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title text-white" id="modalProductName"></h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-4">
+          <div class="col-md-6"><img id="modalProductImage" src="" class="img-fluid rounded-3 w-100" style="height:340px;object-fit:cover" alt=""></div>
+          <div class="col-md-6">
+            <p class="text-muted mb-1" id="modalProductCategory"></p>
+            <h4 id="modalProductPrice" class="fw-bold mb-3"></h4>
+            <div class="mb-3" style="color:#b5a45a"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i> <span class="text-muted small">(142 reviews)</span></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Size</label><select class="form-select" id="modalSize"><option value="">Select Size</option><option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option></select></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Color</label><select class="form-select" id="modalColor"><option value="">Select Color</option><option>Black</option><option>White</option><option>Navy</option><option>Olive</option><option>Beige</option><option>Sage Green</option></select></div>
+            <div class="mb-3"><label class="form-label fw-semibold">Quantity</label><input type="number" class="form-control" id="quantityInput" value="1" min="1" max="10"></div>
+            <button class="btn w-100 fw-bold text-white" style="background:var(--gradient);border:none;padding:12px;border-radius:10px" onclick="addToCartFromModal()"><i class="fas fa-cart-plus me-2"></i>Add to Cart</button>
+            <div class="bg-light rounded-3 p-3 small text-muted mt-3">
+              <div><i class="fas fa-truck me-2" style="color:var(--primary)"></i>Free delivery on orders over ₹499</div>
+              <div class="mt-1"><i class="fas fa-shield-alt me-2" style="color:var(--primary)"></i>100% Original Product</div>
+              <div class="mt-1"><i class="fas fa-undo me-2" style="color:var(--primary)"></i>30-day Easy Returns</div>
             </div>
-            <div class="modal-body p-4">
-                <div class="row g-4">
-                    <div class="col-md-6">
-                        <img id="modalProductImage" src="" class="img-fluid rounded-3 w-100" style="max-height:340px;object-fit:cover" alt="">
-                    </div>
-                    <div class="col-md-6">
-                        <p class="text-muted mb-1" id="modalProductCategory"></p>
-                        <h4 id="modalProductPrice" class="fw-bold mb-3"></h4>
-                        <div class="mb-2 text-warning"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i> <span class="text-muted small">(142 reviews)</span></div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Size</label>
-                            <select class="form-select" id="modalSize">
-                                <option value="">Select Size</option>
-                                <option>XS</option><option>S</option><option>M</option><option>L</option><option>XL</option><option>XXL</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Color</label>
-                            <select class="form-select" id="modalColor">
-                                <option value="">Select Color</option>
-                                <option>Black</option><option>White</option><option>Navy</option><option>Red</option><option>Beige</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Quantity</label>
-                            <input type="number" class="form-control" id="quantityInput" value="1" min="1" max="10">
-                        </div>
-                        <button class="btn w-100 fw-bold mb-2" style="background:linear-gradient(135deg,#667eea,#764ba2);color:white" onclick="addToCartFromModal()">
-                            <i class="fas fa-cart-plus me-2"></i>Add to Cart
-                        </button>
-                        <div class="bg-light rounded-3 p-3 small text-muted">
-                            <div><i class="fas fa-truck text-success me-2"></i>Free delivery over ₹500</div>
-                            <div class="mt-1"><i class="fas fa-shield-alt text-success me-2"></i>100% Original</div>
-                            <div class="mt-1"><i class="fas fa-redo text-success me-2"></i>30-day Returns</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="app.js"></script>
+<script src="api.js"></script>
 <script>
-    if (!isLoggedIn()) { window.location.href = 'login.html'; }
+  if (!isLoggedIn()) window.location.href = 'login.html';
 
-    let activeFilter = 'all';
-    let searchQuery = '';
-    let sortMode = 'default';
+  let allProducts = [];
+  let activeFilter = 'all';
+  let searchQuery  = '';
+  let sortMode     = 'default';
 
-    function getFiltered() {
-        let list = [...PRODUCTS];
-        if (activeFilter !== 'all') list = list.filter(p => p.tag === activeFilter);
-        if (searchQuery) list = list.filter(p => p.name.toLowerCase().includes(searchQuery) || p.category.toLowerCase().includes(searchQuery));
-        if (sortMode === 'price-asc') list.sort((a, b) => a.price - b.price);
-        else if (sortMode === 'price-desc') list.sort((a, b) => b.price - a.price);
-        else if (sortMode === 'name') list.sort((a, b) => a.name.localeCompare(b.name));
-        return list;
+  async function loadAllProducts() {
+    try {
+      allProducts = await fetchProducts();
+      renderMainGrid();
+      renderCategoryGrids();
+      renderDealItems();
+    } catch(e) { showToast('Could not load products', 'danger'); }
+  }
+
+  function getFiltered() {
+    let list = [...allProducts];
+    if (activeFilter !== 'all') list = list.filter(p => p.tag === activeFilter);
+    if (searchQuery) list = list.filter(p => p.name.toLowerCase().includes(searchQuery) || p.category.toLowerCase().includes(searchQuery));
+    if (sortMode === 'price-asc')  list.sort((a,b) => a.price - b.price);
+    if (sortMode === 'price-desc') list.sort((a,b) => b.price - a.price);
+    if (sortMode === 'name')       list.sort((a,b) => a.name.localeCompare(b.name));
+    if (sortMode === 'discount')   list.sort((a,b) => (b.original_price-b.price)/b.original_price - (a.original_price-a.price)/a.original_price);
+    return list;
+  }
+
+  function renderMainGrid() {
+    const list = getFiltered();
+    const c = document.getElementById('productsContainer');
+    const n = document.getElementById('noResults');
+    c.innerHTML = list.map(p => buildCard(p)).join('');
+    n.classList.toggle('d-none', list.length > 0);
+    loadWishlistIds();
+  }
+
+  function renderCategoryGrids() {
+    const cats = { women:'womenGrid', men:'menGrid', kids:'kidsGrid', ethnic:'ethnicGrid', unisex:'unisexGrid', accessories:'accessoriesGrid' };
+    for (const [tag, id] of Object.entries(cats)) {
+      const el = document.getElementById(id);
+      if (el) el.innerHTML = allProducts.filter(p => p.tag === tag).map(p => buildCard(p)).join('');
     }
+  }
 
-    function renderProducts() {
-        const list = getFiltered();
-        const container = document.getElementById('productsContainer');
-        const noResults = document.getElementById('noResults');
-        container.innerHTML = list.map(p => buildProductCard(p)).join('');
-        noResults.classList.toggle('d-none', list.length > 0);
-    }
+  function renderDealItems() {
+    const deals = [...allProducts].sort((a,b) => (b.original_price - b.price) - (a.original_price - a.price)).slice(0,4);
+    document.getElementById('dealItems').innerHTML = deals.map(function(p) {
+      const pid = String(p._id || p.id);
+      const discount = Math.round((1 - p.price / p.original_price) * 100);
+      return '<div class="deal-item" onclick="openProductModal(\'' + pid + '\')">' +
+        '<img src="' + p.image + '" alt="' + p.name + '">' +
+        '<div class="deal-item-body">' +
+        '<p>' + p.category + '</p>' +
+        '<strong style="color:white;font-size:.9rem">' + p.name + '</strong><br>' +
+        '<span class="deal-price">₹' + p.price.toLocaleString('en-IN') + '</span>' +
+        ' <span style="text-decoration:line-through;opacity:.5;font-size:.8rem;margin-left:6px">₹' + p.original_price.toLocaleString('en-IN') + '</span>' +
+        '<div class="mt-1"><span class="badge" style="background:var(--accent);color:var(--dark)">-' + discount + '%</span></div>' +
+        '</div></div>';
+    }).join('');
+  }
 
-    document.getElementById('searchInput').addEventListener('input', e => {
-        searchQuery = e.target.value.toLowerCase().trim();
-        renderProducts();
-    });
+  function buildCard(p) {
+    const pid = String(p._id || p.id);
+    const discount = Math.round((1 - p.price / p.original_price) * 100);
+    return '<div class="pcard">' +
+      '<div class="pcard-img-wrap">' +
+      '<img src="' + p.image + '" alt="' + p.name + '" onclick="openProductModal(\'' + pid + '\')">' +
+      (p.badge ? '<span class="pcard-badge">' + p.badge + '</span>' : '') +
+      '<span class="pcard-discount">-' + discount + '%</span>' +
+      '<button class="pcard-wish wish-btn" data-id="' + pid + '" onclick="toggleWishlist(\'' + pid + '\')">' +
+      '<i class="far fa-heart"></i></button>' +
+      '</div>' +
+      '<div class="pcard-body">' +
+      '<p class="pcard-cat">' + p.category + '</p>' +
+      '<h6 class="pcard-name" onclick="openProductModal(\'' + pid + '\')">' + p.name + '</h6>' +
+      '<div class="pcard-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i> <span style="color:var(--muted);font-size:.7rem">(' + Math.floor(Math.random()*200+50) + ')</span></div>' +
+      '<div class="d-flex align-items-center mb-2"><span class="pcard-price">₹' + p.price.toLocaleString('en-IN') + '</span><span class="pcard-old">₹' + p.original_price.toLocaleString('en-IN') + '</span></div>' +
+      '<button class="btn-addcart" onclick="addToCart(\'' + pid + '\')"><i class="fas fa-cart-plus me-1"></i>Add to Cart</button>' +
+      '</div></div>';
+  }
 
-    document.getElementById('filterBtns').addEventListener('click', e => {
-        const btn = e.target.closest('.filter-btn');
-        if (!btn) return;
-        document.querySelectorAll('.filter-btn').forEach(b => { b.classList.remove('active', 'btn-dark'); b.classList.add('btn-outline-dark'); });
-        btn.classList.add('active', 'btn-dark');
-        btn.classList.remove('btn-outline-dark');
-        activeFilter = btn.dataset.filter;
-        renderProducts();
-    });
+  // Filters
+  document.getElementById('filterBtns').addEventListener('click', e => {
+    const btn = e.target.closest('.ftab');
+    if (!btn) return;
+    document.querySelectorAll('.ftab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    renderMainGrid();
+  });
+  document.getElementById('searchInput').addEventListener('input', e => {
+    searchQuery = e.target.value.toLowerCase().trim();
+    renderMainGrid();
+    document.getElementById('shopSection').scrollIntoView({behavior:'smooth'});
+  });
+  document.getElementById('sortSelect').addEventListener('change', e => { sortMode = e.target.value; renderMainGrid(); });
+  document.getElementById('navSearchInput').addEventListener('input', e => {
+    searchQuery = e.target.value.toLowerCase().trim();
+    document.getElementById('searchInput').value = e.target.value;
+    renderMainGrid();
+    document.getElementById('shopSection').scrollIntoView({behavior:'smooth'});
+  });
 
-    document.getElementById('sortSelect').addEventListener('change', e => { sortMode = e.target.value; renderProducts(); });
+  function filterAndScroll(tag) {
+    activeFilter = tag;
+    document.querySelectorAll('.ftab').forEach(b => b.classList.toggle('active', b.dataset.filter === tag));
+    renderMainGrid();
+    document.getElementById('shopSection').scrollIntoView({behavior:'smooth'});
+  }
+  function scrollToSection(id) { const el = document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth'}); }
+  function doNavSearch() { document.getElementById('shopSection').scrollIntoView({behavior:'smooth'}); }
+  function subscribeNL() { const em = document.getElementById('newsletterEmail'); if(!em.value) return; showToast('🎉 Thanks for subscribing! Check your email for 20% off.','success'); em.value=''; }
 
-    function clearCart() { localStorage.removeItem('cart'); updateCartUI(); showToast('Cart cleared', 'info'); }
+  // Hero slider
+  let slideIndex = 0;
+  const slides = document.querySelectorAll('.hero-slide');
+  const dots   = document.querySelectorAll('.dot');
+  function goToSlide(n) {
+    slides[slideIndex].classList.remove('active'); dots[slideIndex].classList.remove('active');
+    slideIndex = (n + slides.length) % slides.length;
+    slides[slideIndex].classList.add('active'); dots[slideIndex].classList.add('active');
+  }
+  function changeSlide(dir) { goToSlide(slideIndex + dir); }
+  setInterval(() => changeSlide(1), 5000);
 
-    function subscribeNewsletter() {
-        const em = document.getElementById('newsletterEmail');
-        if (!em.value) return;
-        showToast('Thanks for subscribing!', 'success');
-        em.value = '';
-    }
-
-    renderProducts();
+  // Deal timer
+  function startTimer() {
+    let end = new Date(); end.setHours(23,59,59,0);
+    setInterval(() => {
+      const now = new Date(); let diff = Math.max(0, end - now);
+      const h = Math.floor(diff/3600000); diff %= 3600000;
+      const m = Math.floor(diff/60000);   diff %= 60000;
+      const s = Math.floor(diff/1000);
+      document.getElementById('timerH').textContent = String(h).padStart(2,'0');
+      document.getElementById('timerM').textContent = String(m).padStart(2,'0');
+      document.getElementById('timerS').textContent = String(s).padStart(2,'0');
+    }, 1000);
+  }
+  startTimer();
+  loadAllProducts();
 </script>
 </body>
 </html>

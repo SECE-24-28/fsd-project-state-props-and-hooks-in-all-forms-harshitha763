@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Size Advisor — FashionCart</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body{background:var(--bg);font-family:'Poppins',sans-serif}
+    .ai-hero{background:linear-gradient(135deg,#2C3830 0%,#819A91 100%);padding:60px 20px;text-align:center;color:white}
+    .ai-hero h1{font-size:2.5rem;font-weight:900}
+    .ai-hero p{opacity:.85;font-size:1.05rem;max-width:580px;margin:12px auto 0}
+    .step-wrap{background:white;border-radius:20px;box-shadow:0 8px 40px rgba(44,56,48,.1);padding:40px;margin-bottom:24px;border:1px solid var(--border)}
+    .step-num{width:36px;height:36px;background:var(--gradient);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-size:.9rem;flex-shrink:0}
+    .measure-card{background:var(--bg);border-radius:14px;padding:20px;border:1px solid var(--border);text-align:center;transition:all .3s;cursor:default}
+    .measure-card img{width:100%;height:160px;object-fit:contain;margin-bottom:12px}
+    .range-wrap{position:relative}
+    .range-wrap input[type=range]{width:100%;accent-color:var(--primary);height:6px}
+    .range-val{display:inline-block;background:var(--gradient);color:white;padding:4px 14px;border-radius:50px;font-size:.85rem;font-weight:700;min-width:60px;text-align:center}
+    .result-card{background:var(--gradient);color:white;border-radius:20px;padding:36px;text-align:center}
+    .result-card .size-big{font-size:5rem;font-weight:900;line-height:1;display:block;text-shadow:0 4px 20px rgba(0,0,0,.2)}
+    .result-card .conf{font-size:1rem;opacity:.85;margin-top:8px}
+    .fit-bar{height:12px;border-radius:6px;background:rgba(255,255,255,.2);overflow:hidden;margin:8px 0}
+    .fit-bar-fill{height:100%;border-radius:6px;background:white;transition:width 1s ease}
+    .alt-size{display:inline-block;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:white;padding:6px 20px;border-radius:50px;margin:4px;font-weight:600;cursor:pointer;transition:.3s}
+    .alt-size:hover{background:rgba(255,255,255,.35)}
+    .tip-card{background:white;border-radius:14px;padding:18px;border-left:4px solid var(--primary);margin-bottom:12px}
+    .tip-card i{color:var(--primary);margin-right:8px}
+    .gender-btn{background:white;border:2px solid var(--border);border-radius:12px;padding:16px;cursor:pointer;transition:all .3s;text-align:center;font-family:'Poppins',sans-serif}
+    .gender-btn.active{border-color:var(--primary);background:rgba(129,154,145,.1)}
+    .gender-btn i{font-size:2rem;color:var(--primary);display:block;margin-bottom:8px}
+    .gender-btn span{font-weight:600;font-size:.9rem;color:var(--dark)}
+    .category-btn{background:white;border:2px solid var(--border);border-radius:10px;padding:10px 18px;cursor:pointer;transition:all .3s;font-family:'Poppins',sans-serif;font-weight:600;font-size:.85rem}
+    .category-btn.active{border-color:var(--primary);background:var(--primary);color:white}
+    .progress-step{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:32px}
+    .pstep{width:36px;height:36px;border-radius:50%;background:var(--border);color:var(--muted);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;transition:.3s;cursor:pointer}
+    .pstep.active{background:var(--gradient);color:white;box-shadow:0 4px 14px rgba(129,154,145,.4)}
+    .pstep.done{background:var(--primary);color:white}
+    .pstep-line{flex:1;height:2px;background:var(--border);max-width:60px;transition:.3s}
+    .pstep-line.done{background:var(--primary)}
+    #step2,#step3,#step4{display:none}
+  </style>
+</head>
+<body>
+
+<nav class="top-navbar navbar px-3 px-lg-5">
+  <a class="nav-brand" href="index.html"><i class="fas fa-shopping-bag me-2"></i>FashionCart</a>
+  <div class="d-flex align-items-center gap-2">
+    <a href="index.html" class="nav-icon-btn"><i class="fas fa-arrow-left me-1"></i>Back to Shop</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="ai-hero">
+  <div class="container">
+    <div class="mb-3">
+      <span style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:white;padding:6px 18px;border-radius:50px;font-size:.8rem;font-weight:600"><i class="fas fa-robot me-2"></i>AI-Powered · Reduces Returns by 78%</span>
+    </div>
+    <h1><i class="fas fa-ruler-combined me-3"></i>Smart Size Advisor</h1>
+    <p>Answer a few quick questions and our AI finds your perfect fit — reducing returns and ensuring you love every purchase.</p>
+  </div>
+</div>
+
+<div class="container py-5" style="max-width:760px">
+
+  <!-- Progress -->
+  <div class="progress-step">
+    <div class="pstep active" id="ps1">1</div>
+    <div class="pstep-line" id="pl1"></div>
+    <div class="pstep" id="ps2">2</div>
+    <div class="pstep-line" id="pl2"></div>
+    <div class="pstep" id="ps3">3</div>
+    <div class="pstep-line" id="pl3"></div>
+    <div class="pstep" id="ps4"><i class="fas fa-check" style="font-size:.75rem"></i></div>
+  </div>
+
+  <!-- Step 1: Gender & Category -->
+  <div id="step1">
+    <div class="step-wrap">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-num">1</div>
+        <div><h5 class="fw-bold mb-0">Who are you shopping for?</h5><p class="text-muted small mb-0">Select gender and clothing category</p></div>
+      </div>
+      <div class="row g-3 mb-4">
+        <div class="col-4"><button class="gender-btn w-100" onclick="setGender('female',this)"><i class="fas fa-venus"></i><span>Women</span></button></div>
+        <div class="col-4"><button class="gender-btn w-100" onclick="setGender('male',this)"><i class="fas fa-mars"></i><span>Men</span></button></div>
+        <div class="col-4"><button class="gender-btn w-100" onclick="setGender('kids',this)"><i class="fas fa-child"></i><span>Kids</span></button></div>
+      </div>
+      <h6 class="fw-bold mb-3">What are you buying?</h6>
+      <div class="d-flex flex-wrap gap-2 mb-4" id="catBtns">
+        <button class="category-btn active" onclick="setCat('tops',this)">Tops & Blouses</button>
+        <button class="category-btn" onclick="setCat('dress',this)">Dresses</button>
+        <button class="category-btn" onclick="setCat('bottoms',this)">Pants & Skirts</button>
+        <button class="category-btn" onclick="setCat('ethnic',this)">Ethnic Wear</button>
+        <button class="category-btn" onclick="setCat('jacket',this)">Jackets & Coats</button>
+      </div>
+      <button class="btn-primary-grad" style="max-width:200px" onclick="goStep(2)">Next <i class="fas fa-arrow-right ms-2"></i></button>
+    </div>
+  </div>
+
+  <!-- Step 2: Measurements -->
+  <div id="step2">
+    <div class="step-wrap">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-num">2</div>
+        <div><h5 class="fw-bold mb-0">Your measurements</h5><p class="text-muted small mb-0">Drag sliders to your measurements (in cm / kg)</p></div>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Height</label>
+          <div class="d-flex align-items-center gap-3 mb-1">
+            <input type="range" id="heightSlider" min="140" max="200" value="165" oninput="updateVal('heightVal',this.value,'cm')">
+            <span class="range-val" id="heightVal">165 cm</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Weight</label>
+          <div class="d-flex align-items-center gap-3 mb-1">
+            <input type="range" id="weightSlider" min="40" max="120" value="65" oninput="updateVal('weightVal',this.value,'kg')">
+            <span class="range-val" id="weightVal">65 kg</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Chest / Bust</label>
+          <div class="d-flex align-items-center gap-3 mb-1">
+            <input type="range" id="chestSlider" min="70" max="130" value="90" oninput="updateVal('chestVal',this.value,'cm')">
+            <span class="range-val" id="chestVal">90 cm</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Waist</label>
+          <div class="d-flex align-items-center gap-3 mb-1">
+            <input type="range" id="waistSlider" min="55" max="120" value="75" oninput="updateVal('waistVal',this.value,'cm')">
+            <span class="range-val" id="waistVal">75 cm</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Hips</label>
+          <div class="d-flex align-items-center gap-3 mb-1">
+            <input type="range" id="hipsSlider" min="70" max="135" value="95" oninput="updateVal('hipsVal',this.value,'cm')">
+            <span class="range-val" id="hipsVal">95 cm</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-semibold">Age</label>
+          <div class="d-flex align-items-center gap-3 mb-1">
+            <input type="range" id="ageSlider" min="10" max="80" value="28" oninput="updateVal('ageVal',this.value,'yrs')">
+            <span class="range-val" id="ageVal">28 yrs</span>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex gap-3 mt-4">
+        <button class="btn btn-outline-secondary" onclick="goStep(1)"><i class="fas fa-arrow-left me-2"></i>Back</button>
+        <button class="btn-primary-grad" style="max-width:200px" onclick="goStep(3)">Next <i class="fas fa-arrow-right ms-2"></i></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 3: Fit Preference -->
+  <div id="step3">
+    <div class="step-wrap">
+      <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="step-num">3</div>
+        <div><h5 class="fw-bold mb-0">How do you like your fit?</h5><p class="text-muted small mb-0">This helps our AI fine-tune the recommendation</p></div>
+      </div>
+      <div class="row g-3 mb-4" id="fitBtns">
+        <div class="col-md-4"><button class="gender-btn w-100" onclick="setFit('tight',this)"><i class="fas fa-compress-arrows-alt"></i><span>Tight / Fitted</span></button></div>
+        <div class="col-md-4"><button class="gender-btn w-100 active" onclick="setFit('regular',this)"><i class="fas fa-equals"></i><span>Regular / True to Size</span></button></div>
+        <div class="col-md-4"><button class="gender-btn w-100" onclick="setFit('loose',this)"><i class="fas fa-expand-arrows-alt"></i><span>Loose / Oversized</span></button></div>
+      </div>
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Have you worn this brand before?</label>
+        <div class="d-flex gap-3">
+          <button class="category-btn active" id="brandYes" onclick="setBrand(true,this)">Yes — runs true to size</button>
+          <button class="category-btn" id="brandNo" onclick="setBrand(false,this)">No — first time</button>
+        </div>
+      </div>
+      <div class="d-flex gap-3 mt-4">
+        <button class="btn btn-outline-secondary" onclick="goStep(2)"><i class="fas fa-arrow-left me-2"></i>Back</button>
+        <button class="btn-primary-grad" style="max-width:220px" onclick="calculateSize()"><i class="fas fa-robot me-2"></i>Get My Size</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: Result -->
+  <div id="step4">
+    <div class="row g-4">
+      <div class="col-md-5">
+        <div class="result-card">
+          <p style="opacity:.8;margin-bottom:4px;font-size:.88rem;font-weight:600;letter-spacing:1px;text-transform:uppercase">Your Recommended Size</p>
+          <span class="size-big" id="recommendedSize">M</span>
+          <p class="conf" id="confidenceText">94% confidence match</p>
+          <div class="fit-bar mt-3"><div class="fit-bar-fill" id="confBar" style="width:0%"></div></div>
+          <div class="mt-3">
+            <p style="opacity:.75;font-size:.82rem;margin-bottom:8px">Also fits well in:</p>
+            <div id="altSizes"></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-7">
+        <div id="sizeTips"></div>
+        <div class="step-wrap p-3 mt-3">
+          <h6 class="fw-bold mb-3"><i class="fas fa-tshirt me-2" style="color:var(--primary)"></i>Recommended Products for Your Size</h6>
+          <div class="row g-2" id="sizeProducts"></div>
+          <a href="index.html" class="btn-primary-grad d-block text-center mt-3 text-decoration-none" style="border-radius:10px;padding:11px">
+            <i class="fas fa-shopping-bag me-2"></i>Shop My Size on FashionCart
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-4">
+      <button class="btn btn-outline-secondary" onclick="goStep(1)"><i class="fas fa-redo me-2"></i>Start Over</button>
+    </div>
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="api.js"></script>
+<script>
+  let selectedGender = 'female';
+  let selectedCat    = 'tops';
+  let selectedFit    = 'regular';
+  let brandFamiliar  = true;
+  let currentStep    = 1;
+
+  function goStep(n) {
+    document.getElementById('step' + currentStep).style.display = 'none';
+    document.getElementById('step' + n).style.display = 'block';
+    // Progress indicators
+    for (let i = 1; i <= 4; i++) {
+      const ps = document.getElementById('ps' + i);
+      if (!ps) continue;
+      if (i < n)      { ps.classList.remove('active'); ps.classList.add('done'); }
+      else if (i===n) { ps.classList.add('active'); ps.classList.remove('done'); }
+      else            { ps.classList.remove('active','done'); }
+    }
+    for (let i = 1; i <= 3; i++) {
+      const pl = document.getElementById('pl' + i);
+      if (pl) pl.classList.toggle('done', i < n);
+    }
+    currentStep = n;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function setGender(g, btn) {
+    selectedGender = g;
+    document.querySelectorAll('[onclick^="setGender"]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  function setCat(c, btn) {
+    selectedCat = c;
+    document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  function setFit(f, btn) {
+    selectedFit = f;
+    document.querySelectorAll('[onclick^="setFit"]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  function setBrand(val, btn) {
+    brandFamiliar = val;
+    document.getElementById('brandYes').classList.toggle('active', val);
+    document.getElementById('brandNo').classList.toggle('active', !val);
+  }
+  function updateVal(id, val, unit) {
+    document.getElementById(id).textContent = val + ' ' + unit;
+  }
+
+  function calculateSize() {
+    // AI size recommendation algorithm
+    const chest = parseInt(document.getElementById('chestSlider').value);
+    const waist = parseInt(document.getElementById('waistSlider').value);
+    const hips  = parseInt(document.getElementById('hipsSlider').value);
+    const height= parseInt(document.getElementById('heightSlider').value);
+
+    // Size chart logic
+    const sizeChart = {
+      female: [
+        {size:'XS', chest:[72,80], waist:[58,64], hips:[80,88]},
+        {size:'S',  chest:[80,88], waist:[64,70], hips:[88,94]},
+        {size:'M',  chest:[88,96], waist:[70,76], hips:[94,100]},
+        {size:'L',  chest:[96,104],waist:[76,82], hips:[100,108]},
+        {size:'XL', chest:[104,112],waist:[82,90],hips:[108,116]},
+        {size:'XXL',chest:[112,122],waist:[90,100],hips:[116,126]},
+      ],
+      male: [
+        {size:'S',  chest:[86,92], waist:[70,76], hips:[86,92]},
+        {size:'M',  chest:[92,98], waist:[76,82], hips:[92,98]},
+        {size:'L',  chest:[98,106],waist:[82,88], hips:[98,106]},
+        {size:'XL', chest:[106,114],waist:[88,96],hips:[106,114]},
+        {size:'XXL',chest:[114,124],waist:[96,106],hips:[114,122]},
+      ],
+      kids: [
+        {size:'3-4Y',chest:[52,56],waist:[48,52],hips:[52,58]},
+        {size:'4-5Y',chest:[56,60],waist:[52,56],hips:[58,62]},
+        {size:'5-6Y',chest:[60,64],waist:[55,59],hips:[62,66]},
+        {size:'6-7Y',chest:[64,68],waist:[58,62],hips:[66,70]},
+        {size:'7-8Y',chest:[68,72],waist:[61,65],hips:[70,74]},
+      ]
+    };
+
+    const chart = sizeChart[selectedGender] || sizeChart.female;
+    let bestSize = chart[Math.floor(chart.length/2)].size;
+    let bestScore = 0;
+    let allSizes = chart.map(s => s.size);
+
+    chart.forEach(s => {
+      let score = 0;
+      if (chest >= s.chest[0] && chest <= s.chest[1]) score += 3;
+      else if (Math.abs(chest - (s.chest[0]+s.chest[1])/2) < 8) score += 1;
+      if (waist >= s.waist[0] && waist <= s.waist[1]) score += 3;
+      else if (Math.abs(waist - (s.waist[0]+s.waist[1])/2) < 6) score += 1;
+      if (hips >= s.hips[0] && hips <= s.hips[1]) score += 2;
+      if (score > bestScore) { bestScore = score; bestSize = s.size; }
+    });
+
+    // Adjust for fit preference
+    const sizeIndex = allSizes.indexOf(bestSize);
+    if (selectedFit === 'loose' && sizeIndex < allSizes.length-1)  bestSize = allSizes[sizeIndex+1];
+    if (selectedFit === 'tight' && sizeIndex > 0)                   bestSize = allSizes[sizeIndex-1];
+
+    const confidence = 88 + Math.min(10, bestScore * 2);
+    const finalIdx   = allSizes.indexOf(bestSize);
+    const altArr     = [];
+    if (finalIdx > 0)              altArr.push(allSizes[finalIdx-1]);
+    if (finalIdx < allSizes.length-1) altArr.push(allSizes[finalIdx+1]);
+
+    // Show result
+    document.getElementById('recommendedSize').textContent = bestSize;
+    document.getElementById('confidenceText').textContent  = confidence + '% confidence match';
+    setTimeout(() => {
+      document.getElementById('confBar').style.width = confidence + '%';
+    }, 300);
+    document.getElementById('altSizes').innerHTML = altArr.map(s =>
+      '<span class="alt-size">' + s + '</span>'
+    ).join('');
+
+    // Tips
+    const tips = [
+      { icon:'fas fa-info-circle', text: selectedGender==='female'
+          ? 'For this category, our sizes run slightly slim. We recommend going one size up if between sizes.'
+          : 'Our cuts follow standard Indian sizing. If your chest & waist differ by more than 12cm, go by chest measurement.' },
+      { icon:'fas fa-undo', text:'Not happy with the fit? Our 30-day hassle-free return policy means zero risk.' },
+      { icon:'fas fa-ruler', text:'Measure yourself after a meal (not right after — measurements fluctuate by 2-3cm).' },
+    ];
+    document.getElementById('sizeTips').innerHTML = tips.map(t =>
+      '<div class="tip-card"><i class="' + t.icon + '"></i>' + t.text + '</div>'
+    ).join('');
+
+    // Product suggestions
+    const tag = selectedGender === 'female' ? 'women' : selectedGender === 'male' ? 'men' : 'kids';
+    const suggested = PRODUCTS.filter(p => p.tag === tag && p.sizes && p.sizes.includes(bestSize)).slice(0,4);
+    document.getElementById('sizeProducts').innerHTML = suggested.map(p =>
+      '<div class="col-6">' +
+      '<div style="border-radius:10px;overflow:hidden;border:1px solid var(--border);background:white;cursor:pointer" onclick="window.location.href=\'index.html\'">' +
+      '<img src="' + p.image + '" style="width:100%;height:90px;object-fit:cover" alt="' + p.name + '">' +
+      '<div style="padding:8px 10px"><div style="font-size:.75rem;font-weight:700;color:var(--dark)">' + p.name + '</div>' +
+      '<div style="font-size:.72rem;color:var(--primary);font-weight:700">₹' + p.price.toLocaleString('en-IN') + '</div></div>' +
+      '</div></div>'
+    ).join('') || '<div class="col-12 text-muted small text-center py-2">Browse all matching items in the store</div>';
+
+    goStep(4);
+  }
+</script>
+</body>
+</html>

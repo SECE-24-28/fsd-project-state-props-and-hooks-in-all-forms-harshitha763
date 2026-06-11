@@ -13,7 +13,7 @@ router.get('/', auth, async (req, res) => {
 router.get('/ids', auth, async (req, res) => {
   try {
     const items = await Wishlist.find({ user: req.user.id });
-    res.json(items.map(i => i.product));
+    res.json(items.map(i => i.product.toString()));
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
