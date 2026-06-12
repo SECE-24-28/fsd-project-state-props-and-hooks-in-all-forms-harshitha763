@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+﻿import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../utils/api'
 import { useToast } from '../components/Toast'
@@ -94,7 +94,7 @@ export default function Orders() {
                     <button onClick={() => reorder(o)} className="text-xs font-bold border border-[#C8D4BE] text-[#6B7C75] px-4 py-2 rounded-full hover:border-[#819A91] hover:text-[#819A91] transition-all">
                       <i className="fas fa-redo mr-1"></i>Reorder
                     </button>
-                    <Link to={`/track-order`} state={{ ref: o.orderRef }} className="text-xs font-bold border border-[#819A91]/40 text-[#819A91] px-4 py-2 rounded-full hover:bg-[#819A91] hover:text-white transition-all">
+                    <Link to={`/track-order?ref=${o.orderRef}`} className="text-xs font-bold border border-[#819A91]/40 text-[#819A91] px-4 py-2 rounded-full hover:bg-[#819A91] hover:text-white transition-all">
                       <i className="fas fa-map-marker-alt mr-1"></i>Track Order
                     </Link>
                     {o.status === 'Confirmed' && (

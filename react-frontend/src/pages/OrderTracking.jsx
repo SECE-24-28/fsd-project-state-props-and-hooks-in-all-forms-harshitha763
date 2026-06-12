@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 
 const TRACKING_STEPS = [
   { id:'confirmed',  icon:'fa-check-circle',  label:'Order Confirmed',  desc:'Your order has been placed and confirmed.' },
@@ -68,35 +68,47 @@ function TrackingTimeline({ status }) {
 }
 
 export default function OrderTracking() {
-  const [refInput, setRefInput] = useState('')
+  const [searchParams] = useSearchParams()
+  const [refInput, setRefInput] = useState(searchParams.get('ref') || '')
   const [order, setOrder]       = useState(null)
   const [error, setError]       = useState('')
 
-  const trackOrder = () => {
+  // Auto-track if ref is in URL
+  useEffect(() => {
+    const ref = searchParams.get('ref')
+    if (ref) {
+      setRefInput(ref)
+      // Small delay to let state settle
+      setTimeout(() => trackOrderByRef(ref), 100)
+    }
+  }, [])
+
+  const trackOrderByRef = (ref) => {
     setError('')
     setOrder(null)
-    if (!refInput.trim()) { setError('Please enter an order reference number.'); return }
+    if (!ref?.trim()) return
+
     // Search localStorage orders
     const orders = JSON.parse(localStorage.getItem('fc_orders') || '[]')
-    const found  = orders.find(o => o.orderRef === refInput.trim() || o._id === refInput.trim())
+    const found  = orders.find(o => o.orderRef === ref.trim() || o._id === ref.trim())
     if (found) {
       setOrder(found)
-    } else {
+    } else if (ref.startsWith('FC')) {
       // Demo order for testing
-      if (refInput.startsWith('FC')) {
-        setOrder({
-          _id: 'demo', orderRef: refInput.trim(), status:'Shipped',
-          createdAt: new Date(Date.now() - 2*24*60*60*1000).toISOString(),
-          address: 'Demo Address, Mumbai, Maharashtra - 400001',
-          payment: 'Credit/Debit Card',
-          subtotal: 2800, tax: 140, total: 2940,
-          items: [{ name:'Leather Jacket', price:2800, qty:1, image:'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=200&q=80' }]
-        })
-      } else {
-        setError('Order not found. Check your order reference number and try again.')
-      }
+      setOrder({
+        _id: 'demo', orderRef: ref.trim(), status:'Shipped',
+        createdAt: new Date(Date.now() - 2*24*60*60*1000).toISOString(),
+        address: 'Demo Address, Mumbai, Maharashtra - 400001',
+        payment: 'Credit/Debit Card',
+        subtotal: 2800, tax: 140, total: 2940,
+        items: [{ name:'Leather Jacket', price:2800, qty:1, image:'https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&w=200&q=80' }]
+      })
+    } else {
+      setError('Order not found. Check your order reference and try again.')
     }
   }
+
+  const trackOrder = () => trackOrderByRef(refInput)
 
   return (
     <div className="min-h-screen bg-[#F4F6EF] pt-20">
@@ -119,11 +131,11 @@ export default function OrderTracking() {
               value={refInput}
               onChange={e => setRefInput(e.target.value)}
               onKeyDown={e => e.key==='Enter' && trackOrder()}
-              placeholder="e.g. FC1717654321000"
+              placeholder="e.g. FC1717654321000 (from My Orders page)"
               className="flex-1 px-4 py-3 border-2 border-[#C8D4BE] rounded-xl text-sm focus:border-[#819A91] focus:ring-4 focus:ring-[#819A91]/15 outline-none transition-all"
             />
             <button onClick={trackOrder}
-              className="bg-gradient-sage text-white px-6 py-3 rounded-xl font-bold text-sm hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center gap-2">
+              className="bg-gradient-sage text-white px-6 py-3 rounded-xl font-bold text-sm hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center gap-2 whitespace-nowrap">
               <i className="fas fa-search"></i>Track
             </button>
           </div>
@@ -132,10 +144,12 @@ export default function OrderTracking() {
               <i className="fas fa-exclamation-circle"></i>{error}
             </p>
           )}
-          <p className="text-[#6B7C75] text-xs mt-3">
-            <i className="fas fa-info-circle mr-1 text-[#819A91]"></i>
-            Find your order reference in "My Orders" or your confirmation email
-          </p>
+          <div className="mt-3 p-3 bg-[#F4F6EF] rounded-xl border border-[#C8D4BE]">
+            <p className="text-[#6B7C75] text-xs flex items-start gap-2">
+              <i className="fas fa-lightbulb text-[#819A91] mt-0.5 flex-shrink-0"></i>
+              <span>Your order reference (starts with <strong>FC</strong>) is shown on the <strong>My Orders</strong> page after checkout. You can also click "Track Order" directly from any order card below.</span>
+            </p>
+          </div>
         </div>
 
         {/* Result */}
@@ -218,21 +232,61 @@ export default function OrderTracking() {
 
         {/* Info cards */}
         {!order && !error && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {[
-              { icon:'fa-clock',       title:'Processing',  desc:'1–2 business days to prepare your order' },
-              { icon:'fa-truck',       title:'Shipping',    desc:'2–5 business days standard delivery' },
-              { icon:'fa-headset',     title:'Need Help?',  desc:'Contact support@fashioncart.in' },
-            ].map(c => (
-              <div key={c.title} className="bg-white rounded-2xl p-5 shadow-sm border border-[#C8D4BE] text-center">
-                <div className="w-12 h-12 bg-gradient-sage rounded-2xl flex items-center justify-center mx-auto mb-3">
-                  <i className={`fas ${c.icon} text-white`}></i>
+          <>
+            {/* Recent orders from localStorage */}
+            {(() => {
+              const localOrders = JSON.parse(localStorage.getItem('fc_orders') || '[]').reverse().slice(0,5)
+              if (localOrders.length === 0) return null
+              return (
+                <div className="mb-6">
+                  <h3 className="font-bold text-[#2C3830] text-base mb-3 flex items-center gap-2">
+                    <i className="fas fa-clock text-[#819A91]"></i>Your Recent Orders
+                    <span className="text-xs text-[#6B7C75] font-normal">— click to track instantly</span>
+                  </h3>
+                  <div className="space-y-2">
+                    {localOrders.map(o => (
+                      <button key={o._id} onClick={() => { setRefInput(o.orderRef); trackOrderByRef(o.orderRef) }}
+                        className="w-full bg-white border-2 border-[#C8D4BE] hover:border-[#819A91] rounded-2xl px-5 py-4 flex items-center justify-between gap-3 transition-all hover:shadow-md text-left group">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 bg-gradient-sage rounded-xl flex items-center justify-center flex-shrink-0">
+                            <i className="fas fa-box text-white text-sm"></i>
+                          </div>
+                          <div>
+                            <div className="font-bold text-[#2C3830] text-sm font-mono">{o.orderRef}</div>
+                            <div className="text-[#6B7C75] text-xs">{new Date(o.createdAt).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})} · ₹{o.total?.toLocaleString('en-IN')}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-xs font-bold px-3 py-1 rounded-full ${
+                            o.status==='Delivered'?'bg-emerald-100 text-emerald-700':
+                            o.status==='Shipped'?'bg-blue-100 text-blue-700':
+                            o.status==='Cancelled'?'bg-red-100 text-red-600':
+                            'bg-[#D1D8BE] text-[#2C3830]'}`}>{o.status}</span>
+                          <i className="fas fa-arrow-right text-[#819A91] text-xs group-hover:translate-x-1 transition-transform"></i>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-                <h4 className="font-bold text-[#2C3830] text-sm mb-1">{c.title}</h4>
-                <p className="text-[#6B7C75] text-xs">{c.desc}</p>
-              </div>
-            ))}
-          </div>
+              )
+            })()}
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                { icon:'fa-clock',       title:'Processing',  desc:'1–2 business days to prepare your order' },
+                { icon:'fa-truck',       title:'Shipping',    desc:'2–5 business days standard delivery' },
+                { icon:'fa-headset',     title:'Need Help?',  desc:'Contact support@fashioncart.in' },
+              ].map(c => (
+                <div key={c.title} className="bg-white rounded-2xl p-5 shadow-sm border border-[#C8D4BE] text-center">
+                  <div className="w-12 h-12 bg-gradient-sage rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <i className={`fas ${c.icon} text-white`}></i>
+                  </div>
+                  <h4 className="font-bold text-[#2C3830] text-sm mb-1">{c.title}</h4>
+                  <p className="text-[#6B7C75] text-xs">{c.desc}</p>
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

@@ -32,6 +32,8 @@ export default function VirtualTryon() {
   const [colorTint, setColorTint]   = useState(null)
   const [showGuide, setShowGuide]   = useState(true)
   const [imgError, setImgError]     = useState({})
+  const [lastSnap, setLastSnap]     = useState(null)
+  const [showSnapModal, setShowSnapModal] = useState(false)
 
   useEffect(() => {
     api.get('/products')
@@ -154,54 +156,105 @@ export default function VirtualTryon() {
   }
 
   /* ── Snapshot ── */
-  const takeSnap = () => {
-    const canvas = canvasRef.current
-    if (camOn && canvas.width > 0) {
-      const link = document.createElement('a')
-      link.download = `fashioncart-tryon-${Date.now()}.png`
-      link.href = canvas.toDataURL('image/png')
-      link.click()
-      showToast('📸 Snapshot saved!', 'success')
-      return
-    }
-    // Photo mode
-    const stage = document.getElementById('tryStage')
-    const offscreen = document.createElement('canvas')
-    offscreen.width  = stage.offsetWidth  * 2
-    offscreen.height = stage.offsetHeight * 2
-    const ctx = offscreen.getContext('2d')
-    ctx.scale(2,2)
+  const takeSnap = async () => {
+    showToast('📸 Capturing...', 'info')
 
-    const draw = () => {
-      const overlay = overlayRef.current
-      if (overlay && overlay.complete) {
-        const gw = stage.offsetWidth  * 0.72
-        const gh = stage.offsetHeight * 0.72
-        const gx = (stage.offsetWidth  - gw) / 2
-        const gy = stage.offsetHeight  * 0.08
+    // Create a new canvas for the snapshot
+    const snapCanvas = document.createElement('canvas')
+    const ctx = snapCanvas.getContext('2d')
+
+    if (camOn && videoRef.current && videoRef.current.videoWidth > 0) {
+      // CAMERA MODE — capture current video frame + garment overlay
+      const video = videoRef.current
+      snapCanvas.width  = video.videoWidth
+      snapCanvas.height = video.videoHeight
+
+      // Draw mirrored video frame
+      ctx.save()
+      ctx.scale(-1, 1)
+      ctx.drawImage(video, -snapCanvas.width, 0, snapCanvas.width, snapCanvas.height)
+      ctx.restore()
+
+      // Draw garment on top
+      if (selected) {
+        await drawGarmentOnCanvas(ctx, snapCanvas.width, snapCanvas.height)
+      }
+
+      downloadCanvas(snapCanvas)
+
+    } else if (bgImg) {
+      // PHOTO MODE — draw uploaded photo + garment overlay
+      const bgImage = new Image()
+      bgImage.onload = async () => {
+        snapCanvas.width  = bgImage.naturalWidth  || 800
+        snapCanvas.height = bgImage.naturalHeight || 1000
+
+        // Draw background photo
+        ctx.drawImage(bgImage, 0, 0, snapCanvas.width, snapCanvas.height)
+
+        // Draw garment on top
+        if (selected) {
+          await drawGarmentOnCanvas(ctx, snapCanvas.width, snapCanvas.height)
+        }
+
+        downloadCanvas(snapCanvas)
+      }
+      bgImage.src = bgImg
+
+    } else {
+      showToast('Enable camera or upload a photo first!', 'warning')
+    }
+  }
+
+  const drawGarmentOnCanvas = (ctx, w, h) => {
+    return new Promise(resolve => {
+      const gImg = new Image()
+      gImg.crossOrigin = 'anonymous'
+      gImg.onload = () => {
+        const gw = w * 0.72
+        const gh = h * 0.72
+        const gx = (w - gw) / 2
+        const gy = h * 0.08
+
         ctx.globalAlpha = opacity / 100
-        ctx.drawImage(overlay, gx, gy, gw, gh)
+
         if (colorTint) {
+          // Draw garment with color tint using CSS filter workaround
+          ctx.drawImage(gImg, gx, gy, gw, gh)
           ctx.globalCompositeOperation = 'multiply'
-          ctx.globalAlpha = 0.35
+          ctx.globalAlpha = 0.3
           ctx.fillStyle = colorTint
           ctx.fillRect(gx, gy, gw, gh)
           ctx.globalCompositeOperation = 'source-over'
+        } else {
+          ctx.drawImage(gImg, gx, gy, gw, gh)
         }
-        ctx.globalAlpha = 1
-      }
-      const link = document.createElement('a')
-      link.download = `fashioncart-tryon-${Date.now()}.png`
-      link.href = offscreen.toDataURL('image/png')
-      link.click()
-      showToast('📸 Snapshot saved!', 'success')
-    }
 
-    if (bgImg) {
-      const bg = new Image()
-      bg.onload = () => { ctx.drawImage(bg, 0, 0, stage.offsetWidth, stage.offsetHeight); draw() }
-      bg.src = bgImg
-    } else { draw() }
+        ctx.globalAlpha = 1
+        resolve()
+      }
+      gImg.onerror = () => resolve() // skip if image fails
+      gImg.src = selected.image
+    })
+  }
+
+  const downloadCanvas = (canvas) => {
+    try {
+      const dataURL = canvas.toDataURL('image/png')
+      const link    = document.createElement('a')
+      link.download = `fashioncart-tryon-${Date.now()}.png`
+      link.href     = dataURL
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      showToast('✅ Snapshot saved to your device!', 'success')
+
+      // Show share options
+      setLastSnap(dataURL)
+      setShowSnapModal(true)
+    } catch(err) {
+      showToast('Could not save snapshot. Try uploading a photo instead.', 'danger')
+    }
   }
 
   const addSel = async () => {
