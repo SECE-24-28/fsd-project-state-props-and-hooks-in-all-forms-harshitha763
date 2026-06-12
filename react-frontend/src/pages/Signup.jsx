@@ -26,11 +26,33 @@ export default function Signup() {
     if (form.password.length < 6) { setError('Password must be at least 6 characters'); return }
     setLoading(true)
     try {
-      const res = await api.post('/auth/register', { firstName:form.firstName, lastName:form.lastName, email:form.email, phone:form.phone, password:form.password })
+      // 1. Try real backend
+      const res = await api.post('/auth/register', {
+        firstName:form.firstName, lastName:form.lastName,
+        email:form.email, phone:form.phone, password:form.password
+      })
       login(res.data.user, res.data.token)
       navigate('/shop')
-    } catch(err) {
-      setError(err.error || 'Registration failed')
+    } catch(backendErr) {
+      // 2. Fallback — save to localStorage
+      const users = JSON.parse(localStorage.getItem('fc_users') || '[]')
+      if (users.find(u => u.email.toLowerCase() === form.email.toLowerCase().trim())) {
+        setError('Email already registered. Please sign in.')
+        setLoading(false)
+        return
+      }
+      const user = {
+        id: 'u_' + Date.now(),
+        firstName: form.firstName, lastName: form.lastName,
+        email: form.email.toLowerCase().trim(),
+        phone: form.phone || '', gender: '', address: {},
+        createdAt: new Date().toISOString()
+      }
+      users.push({ ...user, password: form.password })
+      localStorage.setItem('fc_users', JSON.stringify(users))
+      const token = 'local_' + Date.now()
+      login(user, token)
+      navigate('/shop')
     } finally { setLoading(false) }
   }
 

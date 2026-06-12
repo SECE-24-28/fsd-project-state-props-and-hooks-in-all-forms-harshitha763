@@ -1,10 +1,12 @@
-import React from 'react'
+﻿import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { CartProvider } from './context/CartContext'
 import { ToastProvider } from './components/Toast'
-import Navbar       from './components/Navbar'
-import Footer       from './components/Footer'
+import Navbar        from './components/Navbar'
+import Footer        from './components/Footer'
+import PageNavigator from './components/PageNavigator'
+import ConnectionStatus from './components/ConnectionStatus'
 import Landing      from './pages/Landing'
 import Login        from './pages/Login'
 import Signup       from './pages/Signup'
@@ -43,6 +45,8 @@ export default function App() {
     <AuthProvider>
       <CartProvider>
         <ToastProvider>
+          <ConnectionStatus/>
+          <PageNavigator/>
           <Routes>
             {/* Public */}
             <Route path="/"              element={<Layout showNavbar={false}><Landing/></Layout>}/>

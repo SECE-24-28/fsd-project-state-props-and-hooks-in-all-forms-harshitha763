@@ -31,9 +31,17 @@ export default function Navbar() {
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-7">
-            {[['/', 'Home'], ['/shop', 'Shop'], ['/size-advisor', 'AI Sizing'], ['/virtual-tryon', 'Try-On'], ['/shop-the-look', 'Lookbook']].map(([path, label]) => (
-              <Link key={path} to={path} className="text-white/75 hover:text-white text-sm font-medium transition-colors relative group">
+          <div className="hidden md:flex items-center gap-5">
+            {[
+              ['/', 'Home'],
+              ['/about', 'About Us'],
+              ['/contact', 'Contact'],
+              ['/shop', 'Shop'],
+              ['/size-advisor', 'AI Sizing'],
+              ['/virtual-tryon', 'Try-On'],
+              ['/track-order', 'Track Order'],
+            ].map(([path, label]) => (
+              <Link key={path} to={path} className="text-white/75 hover:text-white text-sm font-medium transition-colors relative group whitespace-nowrap">
                 {label}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-sage group-hover:w-full transition-all duration-300 rounded-full"></span>
               </Link>
@@ -80,8 +88,18 @@ export default function Navbar() {
         {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden bg-[#1E2A24] border-t border-white/10 px-6 py-4 flex flex-col gap-3">
-            {[['/', 'Home'], ['/shop', 'Shop'], ['/size-advisor', 'AI Sizing'], ['/virtual-tryon', 'Try-On'], ['/shop-the-look', 'Lookbook']].map(([path, label]) => (
-              <Link key={path} to={path} onClick={() => setMenuOpen(false)} className="text-white/80 hover:text-white text-sm font-medium py-1">{label}</Link>
+            {[
+              ['/', 'Home'],
+              ['/about', 'About Us'],
+              ['/contact', 'Contact'],
+              ['/shop', 'Shop'],
+              ['/size-advisor', 'AI Sizing'],
+              ['/virtual-tryon', 'Try-On'],
+              ['/shop-the-look', 'Lookbook'],
+              ['/track-order', 'Track Order'],
+              ['/faq', 'FAQ'],
+            ].map(([path, label]) => (
+              <Link key={path} to={path} onClick={() => setMenuOpen(false)} className="text-white/80 hover:text-white text-sm font-medium py-1 hover:text-[#A7C1A8] transition-colors">{label}</Link>
             ))}
           </div>
         )}

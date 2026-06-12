@@ -564,6 +564,82 @@ export default function VirtualTryon() {
           </div>
         </div>
       </div>
+
+      {/* ── SNAPSHOT PREVIEW MODAL ── */}
+      {showSnapModal && lastSnap && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4" style={{background:'rgba(0,0,0,0.85)', backdropFilter:'blur(8px)'}}>
+          <div className="bg-[#1E2A24] rounded-3xl overflow-hidden shadow-2xl border border-[#819A91]/30 w-full max-w-lg">
+            {/* Header */}
+            <div className="bg-gradient-sage px-6 py-4 flex items-center justify-between">
+              <h3 className="text-white font-bold text-lg flex items-center gap-2">
+                <i className="fas fa-camera"></i>Your Try-On Snapshot
+              </h3>
+              <button onClick={() => setShowSnapModal(false)} className="text-white/70 hover:text-white text-xl w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors">
+                <i className="fas fa-times"></i>
+              </button>
+            </div>
+
+            {/* Image preview */}
+            <div className="p-4">
+              <img src={lastSnap} alt="Your try-on" className="w-full rounded-2xl object-contain max-h-80 bg-[#0d1a12]"/>
+            </div>
+
+            {/* Product info */}
+            {selected && (
+              <div className="px-4 pb-3 flex items-center gap-3 bg-[#819A91]/10 mx-4 rounded-xl">
+                <img src={selected.image} alt={selected.name} className="w-12 h-12 rounded-xl object-cover flex-shrink-0 my-3"
+                  onError={e=>e.target.src=`https://placehold.co/48x48/D1D8BE/2C3830?text=${selected.name[0]}`}/>
+                <div>
+                  <p className="text-white font-bold text-sm">{selected.name}</p>
+                  <p className="text-[#A7C1A8] font-black">₹{selected.price.toLocaleString('en-IN')}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Actions */}
+            <div className="p-4 space-y-3">
+              {/* Download again */}
+              <button onClick={() => {
+                const link = document.createElement('a')
+                link.download = `fashioncart-tryon-${Date.now()}.png`
+                link.href = lastSnap
+                link.click()
+              }} className="w-full bg-[#2C3830] hover:bg-[#3a4e42] text-white py-3 rounded-xl font-bold text-sm transition-colors flex items-center justify-center gap-2">
+                <i className="fas fa-download"></i>Download Again
+              </button>
+
+              {/* Add to cart */}
+              {selected && (
+                <button onClick={async () => {
+                  await addSel()
+                  setShowSnapModal(false)
+                }} className="w-full bg-gradient-sage text-white py-3 rounded-xl font-bold text-sm hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-sage-sm">
+                  <i className="fas fa-cart-plus"></i>Add {selected.name} to Cart — ₹{selected.price.toLocaleString('en-IN')}
+                </button>
+              )}
+
+              {/* Share (Web Share API) */}
+              {'share' in navigator && (
+                <button onClick={async () => {
+                  try {
+                    const blob = await (await fetch(lastSnap)).blob()
+                    const file = new File([blob], 'fashioncart-tryon.png', {type:'image/png'})
+                    await navigator.share({ title:'My FashionCart Try-On', text:`Check out how I look in ${selected?.name || 'this outfit'} from FashionCart!`, files:[file] })
+                  } catch(e) { showToast('Sharing cancelled','info') }
+                }} className="w-full border-2 border-[#819A91]/40 text-[#A7C1A8] py-3 rounded-xl font-bold text-sm hover:bg-[#819A91]/15 transition-colors flex items-center justify-center gap-2">
+                  <i className="fas fa-share-alt"></i>Share Photo
+                </button>
+              )}
+
+              {/* Continue shopping */}
+              <button onClick={() => setShowSnapModal(false)}
+                className="w-full text-white/50 hover:text-white text-sm font-medium transition-colors py-2">
+                Continue Try-On
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

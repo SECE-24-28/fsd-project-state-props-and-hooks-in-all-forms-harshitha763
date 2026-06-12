@@ -15,18 +15,29 @@ export default function Login() {
     setError('')
     setLoading(true)
     try {
-      // Demo account
+      // 1. Try real backend first
+      const res = await api.post('/auth/login', form)
+      login(res.data.user, res.data.token)
+      navigate('/shop')
+    } catch(backendErr) {
+      // 2. Demo account (always works)
       if (form.email.toLowerCase().trim() === 'suryasekar626@gmail.com' && form.password === 'Surya@123') {
         const demoUser = { id:'demo001', firstName:'Surya', lastName:'Sekar', email:'suryasekar626@gmail.com', phone:'+91 98765 43210' }
         login(demoUser, 'demo_token_' + Date.now())
         navigate('/shop')
         return
       }
-      const res = await api.post('/auth/login', form)
-      login(res.data.user, res.data.token)
-      navigate('/shop')
-    } catch(err) {
-      setError(err.error || 'Invalid email or password')
+      // 3. Fallback to localStorage users (offline mode)
+      const users = JSON.parse(localStorage.getItem('fc_users') || '[]')
+      const found = users.find(u => u.email.toLowerCase() === form.email.toLowerCase().trim() && u.password === form.password)
+      if (found) {
+        const { password:_pw, ...user } = found
+        const token = 'local_' + Date.now()
+        login(user, token)
+        navigate('/shop')
+      } else {
+        setError(backendErr.error || backendErr.message || 'Invalid email or password')
+      }
     } finally { setLoading(false) }
   }
 
