@@ -9,9 +9,7 @@ export default function Landing() {
   const navigate = useNavigate()
   const [trending, setTrending] = useState([])
 
-  useEffect(() => {
-    if (isLoggedIn) navigate('/shop')
-  }, [isLoggedIn])
+  // NOTE: Do NOT auto-redirect — let everyone see the landing page
 
   useEffect(() => {
     api.get('/products')
@@ -37,6 +35,33 @@ export default function Landing() {
   return (
     <div className="bg-white">
 
+      {/* ── LANDING NAVBAR (separate from app navbar) ── */}
+      <nav className="fixed top-0 left-0 right-0 z-50 px-6 md:px-16 py-4 flex items-center justify-between transition-all duration-300"
+        style={{background:'rgba(13,26,18,0.9)', backdropFilter:'blur(16px)', borderBottom:'1px solid rgba(129,154,145,0.15)'}}>
+        <Link to="/" className="font-playfair text-xl font-extrabold flex items-center gap-2 text-gradient">
+          <i className="fas fa-leaf text-[#A7C1A8]"></i>FashionCart
+        </Link>
+        <div className="hidden md:flex items-center gap-7">
+          {[['#features','Features'],['#categories','Shop'],['#trending','New In'],['#reviews','Reviews']].map(([href,label]) => (
+            <a key={href} href={href} className="text-white/70 hover:text-[#A7C1A8] text-sm font-medium transition-colors">{label}</a>
+          ))}
+        </div>
+        <div className="flex items-center gap-3">
+          {isLoggedIn ? (
+            <Link to="/shop" className="bg-gradient-sage text-white px-5 py-2.5 rounded-full text-sm font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all shadow-sage-sm flex items-center gap-2">
+              <i className="fas fa-shopping-bag"></i>Go to Shop
+            </Link>
+          ) : (
+            <>
+              <Link to="/login" className="text-white/75 hover:text-white text-sm font-semibold border border-white/20 px-4 py-2 rounded-full transition-all hover:border-white/50">Sign In</Link>
+              <Link to="/signup" className="bg-gradient-sage text-white px-5 py-2.5 rounded-full text-sm font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all shadow-sage-sm">
+                <i className="fas fa-user-plus mr-1.5"></i>Sign Up Free
+              </Link>
+            </>
+          )}
+        </div>
+      </nav>
+
       {/* ── HERO ── */}
       <section className="min-h-screen bg-[#0d1a12] grid grid-cols-1 lg:grid-cols-2 relative overflow-hidden">
         {/* Left */}
@@ -52,7 +77,7 @@ export default function Landing() {
           </h1>
           <p className="text-white/60 text-base leading-relaxed mb-10 max-w-md">India's most curated fashion destination — 66 handpicked styles for Women, Men, Kids & more. Delivered fast, priced fair.</p>
           <div className="flex gap-4 flex-wrap">
-            <Link to="/signup" className="bg-gradient-sage text-white px-10 py-4 rounded-full font-bold text-base hover:-translate-y-1 hover:shadow-sage transition-all inline-flex items-center gap-2">
+            <Link to={isLoggedIn ? "/shop" : "/signup"} className="bg-gradient-sage text-white px-10 py-4 rounded-full font-bold text-base hover:-translate-y-1 hover:shadow-sage transition-all inline-flex items-center gap-2">
               <i className="fas fa-bag-shopping"></i>Start Shopping Free
             </Link>
             <Link to="/login" className="border-2 border-[#819A91]/40 text-white/85 px-10 py-4 rounded-full font-semibold text-base hover:border-[#A7C1A8] hover:bg-[#819A91]/10 transition-all inline-flex items-center gap-2">
@@ -106,7 +131,7 @@ export default function Landing() {
       </div>
 
       {/* ── UNIQUE FEATURES ── */}
-      <section className="py-24 bg-[#1E2A24]">
+      <section className="py-24 bg-[#1E2A24]" id="features">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
             <span className="text-[#A7C1A8] text-xs font-bold tracking-[3px] uppercase block mb-3">Technology Meets Fashion</span>
@@ -142,7 +167,7 @@ export default function Landing() {
       </section>
 
       {/* ── FEATURES STRIP ── */}
-      <section className="py-20 bg-[#F4F6EF]">
+      <section className="py-20 bg-[#F4F6EF]" id="features">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <span className="text-[#819A91] text-xs font-bold tracking-[3px] uppercase block mb-3">Why FashionCart</span>
@@ -242,7 +267,7 @@ export default function Landing() {
       </section>
 
       {/* ── TESTIMONIALS ── */}
-      <section className="py-24 bg-[#1E2A24]">
+      <section className="py-24 bg-[#1E2A24]" id="features">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-14">
             <span className="text-[#A7C1A8] text-xs font-bold tracking-[3px] uppercase block mb-3">Reviews</span>

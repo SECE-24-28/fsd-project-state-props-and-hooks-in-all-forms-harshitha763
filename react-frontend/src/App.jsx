@@ -28,10 +28,10 @@ function PrivateRoute({ children }) {
   return isLoggedIn ? children : <Navigate to="/login" replace/>
 }
 
-function Layout({ children, showFooter = true }) {
+function Layout({ children, showFooter = true, showNavbar = true }) {
   return (
     <>
-      <Navbar/>
+      {showNavbar && <Navbar/>}
       <main>{children}</main>
       {showFooter && <Footer/>}
     </>
@@ -45,7 +45,7 @@ export default function App() {
         <ToastProvider>
           <Routes>
             {/* Public */}
-            <Route path="/"              element={<Layout><Landing/></Layout>}/>
+            <Route path="/"              element={<Layout showNavbar={false}><Landing/></Layout>}/>
             <Route path="/login"         element={<Layout showFooter={false}><Login/></Layout>}/>
             <Route path="/signup"        element={<Layout showFooter={false}><Signup/></Layout>}/>
             <Route path="/about"         element={<Layout><About/></Layout>}/>
